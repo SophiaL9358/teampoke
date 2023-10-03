@@ -1,3 +1,10 @@
+html, body {
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	font-size: large;
+}
+
+
+/*
 @import '@fontsource/fira-mono';
 
 :root {
@@ -105,3 +112,5 @@ button:focus:not(:focus-visible) {
 	width: 1px;
 	white-space: nowrap;
 }
+
+*/
