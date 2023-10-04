@@ -48,7 +48,9 @@
                     // audio things: 
                     console.log(downloadLink.href)
                     const data = {
-                        audio_url: "http://localhost:5173/test.mp3"//"http://localhost:5173/yes.mp4" //"https://github.com/AssemblyAI-Examples/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3"
+                        audio_url: downloadLink.download
+                        //"http://localhost:5173/yes.mp4" 
+                        //"https://github.com/AssemblyAI-Examples/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3"
                     }
                     
                     const response = await axios.post(transcript_endpoint, data, { headers: headers })
