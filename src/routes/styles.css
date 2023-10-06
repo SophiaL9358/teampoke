@@ -3,6 +3,10 @@ html, body {
 	font-size: large;
 }
 
+.hide {
+	display: none;
+	visibility: hidden;
+}
 
 /*
 @import '@fontsource/fira-mono';

@@ -29,6 +29,8 @@
 	"type": "module",
 	"dependencies": {
 		"bootstrap": "^5.3.2",
-		"jquery": "^3.7.1"
+		"firebase": "^10.4.0",
+		"jquery": "^3.7.1",
+		"openai": "^3.1.0"
 	}
 }
