@@ -1,9 +1,10 @@
 import { Configuration, OpenAIApi } from "openai";
 import { json } from "@sveltejs/kit";
+import {OPENAI_API_KEY} from "$env/static/private"
 
 
 const configuration = new Configuration({
-  apiKey: "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", // TODO: change to env variable
+  apiKey: OPENAI_API_KEY, // TODO: change to env variable
 });
 const openai = new OpenAIApi(configuration);
 
