@@ -1,9 +1,7 @@
 <script>
-	import jQuery from 'jquery';
 	import { onMount } from 'svelte';
     import axios from 'axios'
     import { initializeApp } from "firebase/app";
-    import { getAnalytics } from "firebase/analytics";
     import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
 
