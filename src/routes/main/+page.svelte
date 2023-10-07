@@ -87,13 +87,14 @@
         downloadLink = document.getElementById("download")
         stopBtn = document.getElementById("stopBtn");
 
+        mainQuestion.classList.remove("hide");
+        noVideoPrompt.classList.add("hide");
+        question = "Loading..."
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             // SOPHIA REMINDER: UR DEBIT CARD IS CONNECTED TO GOOGLE CLOUD ACC
             .then( (stream) => {
                 var mainQuestion = document.getElementById("mainQuestion");
                 var noVideoPrompt = document.getElementById("noVideoPrompt");
-                mainQuestion.classList.remove("hide");
-                noVideoPrompt.classList.add("hide");
                 video.srcObject = stream;
                 
                 // audio
@@ -194,7 +195,7 @@
 <div class = "w-100">
     
     <div class = "w-100 p-4 pt-5 d-flex flex-column align-items-center">
-            <span id = 'mainQuestion' class ="text-center fs-4 hide">
+            <span id = 'mainQuestion' class ="hide text-center fs-4">
                 {question}
                 <br>
                 <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-1" value= "Stop video" />
