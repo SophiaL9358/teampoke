@@ -17,6 +17,9 @@
             while (m = regex.exec(fragmentString)) {
             params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
         }
+        if (params.state) {
+            jquery("#changePage").trigger("click");
+        }
         
         /*if (Object.keys(params).length > 0) {
             localStorage.setItem('oauth2-test-params', JSON.stringify(params) );
