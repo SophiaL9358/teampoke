@@ -1,9 +1,11 @@
 <script>
-	import './styles.css';
+	import Footer from './Footer.svelte';
+import './styles.css';
 </script>
 
-<div class="app">
+<div class="app" style = "height: 100vh;">
 	<main>
 		<slot />
 	</main>
+	
 </div>
