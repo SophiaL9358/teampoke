@@ -41,8 +41,10 @@ function oauth2SignIn() {
     form.setAttribute('action', oauth2Endpoint);
 
     // Parameters to pass to OAuth 2.0 endpoint.
-    var params = {'client_id': '802220089604-39b239d5mjprd4ududun6i4ve4ma88c2.apps.googleusercontent.com', // TODO: Change id...
-                'redirect_uri': 'http://localhost:5173',
+    var windowHref = (window.location.href).toString();
+    console.log()
+    var params = {'client_id': '1083819190018-jmgb2p9eucom10vu675d19nkbcc1e35o.apps.googleusercontent.com', // TODO: Change id...
+                'redirect_uri': windowHref,
                 'response_type': 'token',
                 'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
                 'include_granted_scopes': 'true',
