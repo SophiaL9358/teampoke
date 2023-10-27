@@ -24,8 +24,8 @@
     #logo {
         position: absolute;
         height: 130px;
-        bottom: 20px;
-        left: 20px;
+        bottom: 7px;
+        left: 7px;
         
     }
     section {
