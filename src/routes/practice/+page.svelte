@@ -49,16 +49,15 @@ Is there anything else you’d like us to know?`;
     var split = questions.split("\n");
     // firebse config
     const firebaseConfig = {
-        apiKey: "AIzaSyCqMXF0c9ewaFpaddxF1p2iTn6AuZbeC4g",
-        authDomain: "aeee-416c3.firebaseapp.com",
-        databaseURL: "https://aeee-416c3.firebaseio.com",
-        projectId: "aeee-416c3",
-        storageBucket: "aeee-416c3.appspot.com",
-        messagingSenderId: "745101593585",
-        appId: "1:745101593585:web:56d9d0572cbe6aa376d250",
-        measurementId: "G-WMS61VSZG9",
-        storageBucket: 'gs://aeee-416c3.appspot.com'
+        apiKey: "AIzaSyDIMSd2qMl2vltWtTDgNjRFlgTWl73jMXw",
+        authDomain: "mock-interview-app-403217.firebaseapp.com",
+        projectId: "mock-interview-app-403217",
+        storageBucket: "mock-interview-app-403217.appspot.com",
+        messagingSenderId: "1083819190018",
+        appId: "1:1083819190018:web:046cef3647a6736bd0841b",
+        measurementId: "G-K0RYJF8CBX"
     };
+
     var app;
     var storage;
     
@@ -208,7 +207,6 @@ Is there anything else you’d like us to know?`;
 
 </script>
 <div class = "w-100 bg-dark text-light " style = "height: 100vh;">
-    
     <div class = "w-100 p-4 pt-5 d-flex flex-column align-items-center">
         <span class = "fs-4">{question}</span>
         <br>
