@@ -3,8 +3,7 @@
     import axios from 'axios'
     import { initializeApp } from "firebase/app";
     import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
-    import DetectRTC from "detectrtc/DetectRTC";
-    
+
     // its too complicated to put it in a txt file cause modules and context and svelte and *dies*
     var questions = `Why are you interested in this internship, and what skills or experiences do you hope to gain?
 What’s the best team you’ve ever been a part of and why?
@@ -50,16 +49,15 @@ Is there anything else you’d like us to know?`;
     var split = questions.split("\n");
     // firebse config
     const firebaseConfig = {
-        apiKey: "AIzaSyCqMXF0c9ewaFpaddxF1p2iTn6AuZbeC4g",
-        authDomain: "aeee-416c3.firebaseapp.com",
-        databaseURL: "https://aeee-416c3.firebaseio.com",
-        projectId: "aeee-416c3",
-        storageBucket: "aeee-416c3.appspot.com",
-        messagingSenderId: "745101593585",
-        appId: "1:745101593585:web:56d9d0572cbe6aa376d250",
-        measurementId: "G-WMS61VSZG9",
-        storageBucket: 'gs://aeee-416c3.appspot.com'
+        apiKey: "AIzaSyDIMSd2qMl2vltWtTDgNjRFlgTWl73jMXw",
+        authDomain: "mock-interview-app-403217.firebaseapp.com",
+        projectId: "mock-interview-app-403217",
+        storageBucket: "mock-interview-app-403217.appspot.com",
+        messagingSenderId: "1083819190018",
+        appId: "1:1083819190018:web:046cef3647a6736bd0841b",
+        measurementId: "G-K0RYJF8CBX"
     };
+
     var app;
     var storage;
     
@@ -105,7 +103,7 @@ Is there anything else you’d like us to know?`;
 
         mainQuestion.classList.remove("hide");
         noVideoPrompt.classList.add("hide");
-        question = "Loading...";
+        question = "Loading..."
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             // SOPHIA REMINDER: UR DEBIT CARD IS CONNECTED TO GOOGLE CLOUD ACC
             .then( (stream) => {
@@ -173,7 +171,7 @@ Is there anything else you’d like us to know?`;
                             await new Promise((resolve) => setTimeout(resolve, 3000))
                         }
                     }*/
-                    console.log('OUT');
+                    console.log('OUT')
 
                 })
 
@@ -206,34 +204,9 @@ Is there anything else you’d like us to know?`;
             });
         
     }
-    let cameraReady = "";
-    let microphoneReady = "";
-    DetectRTC.load(function() {
-        console.log(DetectRTC.hasWebcam===true);
-        console.log(DetectRTC.hasMicrophone===true);
-    if (DetectRTC.hasWebcam === true && DetectRTC.isWebsiteHasWebcamPermissions === true) {
-        cameraReady = "Ready";
-    }
-    else if (DetectRTC.hasWebcam === false) {
-        cameraReady = "Not Connected";
-    }
-    else{
-        cameraReady = "No Permissions";
-    }
 
-    if (DetectRTC.hasMicrophone === true && DetectRTC.isWebsiteHasMicrophonePermissions === true) {
-        microphoneReady = "Ready";
-    }
-    else if (DetectRTC.hasMicrophone === false) {
-        microphoneReady = "Not Connected";
-    }
-    else{
-        microphoneReady = "No Permissions";
-    }
-})
 </script>
-<div class = "w-100 bg-dark text-light " style = "height: 110vh;">
-    
+<div class = "w-100 bg-dark text-light " style = "height: 100vh;">
     <div class = "w-100 p-4 pt-5 d-flex flex-column align-items-center">
         <span class = "fs-4">{question}</span>
         <br>
@@ -245,15 +218,7 @@ Is there anything else you’d like us to know?`;
             </div>
             
         </span>
-        <table>
-            <tr>
-              <td><img src='https://svgshare.com/i/z_L.svg' alt='Camera' width="30" height="30"/></td>
-              <td style="font-size:30px">{cameraReady}</td>
-              <td style="width:30px"></td>
-              <td><img src='https://svgshare.com/i/za1.svg' alt='Microphone' width="30" height="30"/></td>
-              <td style="font-size:30px">{microphoneReady}</td>
-            </tr>
-          </table>
+        
         <a id = "download" download>Download Voice Recording</a>
         
         
@@ -270,8 +235,8 @@ Is there anything else you’d like us to know?`;
 
     </div> 
 </div>
+
 <style>
-    
 video {
     width: 500px;
     aspect-ratio: 16/9;
