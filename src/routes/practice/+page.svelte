@@ -206,7 +206,7 @@ Is there anything else you’d like us to know?`;
     }
 
 </script>
-<div class = "w-100 bg-dark text-light " style = "height: 100vh;">
+<div class = "w-100 " style = "height: 100vh;">
     <div class = "w-100 p-4 pt-5 d-flex flex-column align-items-center">
         <span class = "fs-4">{question}</span>
         <br>
@@ -220,8 +220,6 @@ Is there anything else you’d like us to know?`;
         </span>
         
         <a id = "download" download>Download Voice Recording</a>
-        
-        
         
             <form  id = "noVideoPrompt" on:submit = {() => {console.log("happening");startVideo();getQuestion();}}  class = "d-flex w-100 mt-2 justify-content-center align-content-center" style = "height: 50px;">
                 <!-- <i>Key Points on Resume!</i>
@@ -249,16 +247,4 @@ video {
 
 }
 
-.col-md-3 {
-    background-color: rgb(230, 255, 236);
-   /* background-color:rgb(231, 250, 235);
-   rgb(173, 230, 189)
-   
-       border: 2px rgb(173, 230, 189) solid;
-*/
-}
-
-textarea {
-    border-radius: 10px;
-}
 </style>
