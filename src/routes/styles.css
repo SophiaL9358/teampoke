@@ -25,6 +25,10 @@ h1 {
 	border-color: rgba(0, 0, 0, 0);
 }
 
+.poke-btn:hover > * {
+	cursor: pointer;
+}
+
 .bg-light-green {
 	background-color: #B5BB1F;
 }
