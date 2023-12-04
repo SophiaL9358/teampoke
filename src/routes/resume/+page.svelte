@@ -46,15 +46,20 @@
 </style>
 
 
-<body class="bg-light-yellow">
+<body class="">
    
-    <section class = "bg-light-yellow flex-center flex-column text-center" style = "height: 100vh;">
+    <section class = "w-100 flex-center flex-column text-center" style = "height: 100vh;">
 
 
         <!-- https://gist.github.com/dahnielson/59566b3d91cc8cf09c13d1419604a8a2 -->
-        <div class = "">
-            <label for="files" class="text-center w-100 upload-btn bg-light-green">Upload Resume</label>
-            <input id="files" style="visibility:hidden;" type="file" bind:files accept="application/pdf,application/msword,
+        <div class = "flex-center text-center w-100">
+            <button class = "poke-btn bg-light-green">
+                <label for="files" class="upload-btn ">
+                    Upload Resume
+                </label>
+            </button>
+           
+            <input id="files" style="visibility:hidden; display: none;" type="file" bind:files accept="application/pdf,application/msword,
             application/vnd.openxmlformats-officedocument.wordprocessingml.document">
           </div>
             {#if files && files[0]}
