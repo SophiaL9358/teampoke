@@ -40,6 +40,10 @@ h1 {
 	background-color: #4385F4;
 }
 
+.bg-contrast-blue{
+	background-color: #525FE1;
+}
+
 /*
 @import '@fontsource/fira-mono';
 

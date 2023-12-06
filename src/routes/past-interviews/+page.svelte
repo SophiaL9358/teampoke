@@ -1,4 +1,6 @@
 <script>
+	import Navbar from "../Navbar.svelte";
+
     var interviews = [
         {name: "Practice #4 - October 6th, 2023", date:"12/6/23"},
         {name: "Practice #3 - October 6th, 2023", date:"12/6/23"},
@@ -10,10 +12,11 @@
         {name: "Practice #1 - October 6th, 2023", date:"12/6/23"}
     ]
 </script>
-
+<Navbar back = true />
+<br>
 <section class = "w-100 text-center pb-5 mt-5">
     <h2>Past Interviews</h2>
-    <div class = "w-100 d-flex justify-content-center pt-3">
+    <div class = "w-100 d-flex justify-content-center pt-5">
         <table>
             <tr style = "background-color: #d3d3d3;">
                 <th>Interview (Click link to download)</th>
@@ -48,7 +51,8 @@
     .delete-btn:hover >i {
         color: white !important;
     }
-    .delete-cell {
-        padding: 10px 0px 10px 0px !important;
+    .name-cell {
+        width: 50%;
     }
+
 </style>
