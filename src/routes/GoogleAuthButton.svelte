@@ -3,6 +3,7 @@
     import { setDoc, doc } from 'firebase/firestore';
     import jquery from 'jquery';
     import { onMount } from 'svelte';
+    import { user_sub } from "$lib/global.js";
 
     /*
     * Create form to request access token from Google's OAuth 2.0 server.
@@ -18,7 +19,8 @@
             params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
         }
         if (params.state) {
-            jquery("#changePage").trigger("click");
+            trySampleRequest();
+            //jquery("#changePage").trigger("click");
         }
         
         /*if (Object.keys(params).length > 0) {
@@ -43,7 +45,7 @@ function oauth2SignIn() {
     // Parameters to pass to OAuth 2.0 endpoint.
     var windowHref = (window.location.href).toString();
     console.log()
-    var params = {'client_id': '1083819190018-jmgb2p9eucom10vu675d19nkbcc1e35o.apps.googleusercontent.com', // TODO: Change id...
+    var params = {'client_id': '802220089604-39b239d5mjprd4ududun6i4ve4ma88c2.apps.googleusercontent.com', // TODO: Change id...
                 'redirect_uri': windowHref,
                 'response_type': 'token',
                 'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -67,30 +69,36 @@ function oauth2SignIn() {
 }
 
 async function trySampleRequest() {
-    //    var params = JSON.parse(localStorage.getItem('oauth2-test-params')); // TODO: This saves it, so once you sign in, you only have to sign in once!
+    // var params = JSON.parse(localStorage.getItem('oauth2-test-params')); // TODO: This saves it, so once you sign in, you only have to sign in once!
     console.log(params)
     if (params && params['access_token']) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET',
-            'https://www.googleapis.com/oauth2/v3/userinfo?' +
-            'access_token=' + params['access_token']);
-        xhr.onreadystatechange = function (e) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET',
+          'https://www.googleapis.com/oauth2/v3/userinfo?' +
+          'access_token=' + params['access_token']);
+      xhr.onreadystatechange = function (e) {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            userResponse = JSON.parse(xhr.response); // sub (unique id), name, given_name, email
-            console.log(xhr.response);
+          userResponse = JSON.parse(xhr.response); // sub (unique id), name, given_name, email
+          // console.log(xhr.response);
+          createUser(); // TODO: what if user already exists?
         } else if (xhr.readyState === 4 && xhr.status === 401) {
-            // Token invalid, so prompt for user permission.
-            oauth2SignIn();
+          // Token invalid, so prompt for user permission.
+          oauth2SignIn();
+          
         }
-        };
-        console.log(params['access_token'])
-        
-        xhr.send(null);
+      };
+      
+      xhr.send(null);
     } else {
-        oauth2SignIn();
+      oauth2SignIn();
     }
-    }
+  }
 
+    async function createUser() {
+        user_sub.set(userResponse.sub);
+        jquery("#changePage").trigger('click');
+        //document.location.href = "/home";
+    }
 
 
 </script>
@@ -100,7 +108,7 @@ async function trySampleRequest() {
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </svelte:head>
 <button on:click = {trySampleRequest} class = "poke-btn bg-google-blue text-light mb-3">Google Login</button>
-<a href = "/practice"><button style = "display: none;" id = "changePage">Change Pages</button></a>
+<a href = "/home"><button style = "display: none;" id = "changePage">Change Pages</button></a>
 
 <style>
     /* For centering the google sign in button */

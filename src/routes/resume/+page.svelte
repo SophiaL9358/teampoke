@@ -1,28 +1,12 @@
 <script>
     /** @type {import('./$types').LayoutData} */
     export let data;
-    import { initializeApp } from "firebase/app";
-    import { getFirestore } from "firebase/firestore";
+	import Navbar from "../Navbar.svelte";
    
 
 
     let files;
     let filename;
-
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDIMSd2qMl2vltWtTDgNjRFlgTWl73jMXw",
-        authDomain: "mock-interview-app-403217.firebaseapp.com",
-        projectId: "mock-interview-app-403217",
-        storageBucket: "mock-interview-app-403217.appspot.com",
-        messagingSenderId: "1083819190018",
-        appId: "1:1083819190018:web:046cef3647a6736bd0841b",
-        measurementId: "G-K0RYJF8CBX"
-    };
-
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
    
     const onChange = () => {
         if (files && files[0]) {
@@ -36,24 +20,15 @@
 
 </script>
 
-
-
-
-
-<style>
-
-
-</style>
-
-
+<Navbar back = true/>
 <body class="">
    
-    <section class = "w-100 flex-center flex-column text-center" style = "height: 100vh;">
+    <section class = "w-100 flex-center flex-column text-center mt-5" >
 
 
         <!-- https://gist.github.com/dahnielson/59566b3d91cc8cf09c13d1419604a8a2 -->
         <div class = "flex-center text-center w-100">
-            <button class = "poke-btn bg-light-green">
+            <button class = "poke-btn bg-contrast-light-orange">
                 <label for="files" class="upload-btn ">
                     Upload Resume
                 </label>
@@ -71,3 +46,7 @@
 
 
 </body>
+<style>
+
+
+</style>

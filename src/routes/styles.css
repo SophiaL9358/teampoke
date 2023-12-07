@@ -44,6 +44,18 @@ h1 {
 	background-color: #525FE1;
 }
 
+.bg-contrast-light-orange {
+	background-color: #FFA41B;
+}
+
+.bg-contrast-light-blue {
+	background-color: #67ACFE;
+}
+
+.bg-contrast-orange {
+	background-color: #F86F03;
+}
+
 /*
 @import '@fontsource/fira-mono';
 

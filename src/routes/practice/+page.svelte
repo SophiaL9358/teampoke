@@ -1,9 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
     import axios from 'axios'
-    import { initializeApp } from "firebase/app";
-    import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+    import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
     import DetectRTC from "detectrtc/DetectRTC";
+    import {user_sub, storage, app} from "$lib/global.js";
+	import Navbar from '../Navbar.svelte';
     
     // its too complicated to put it in a txt file cause modules and context and svelte and *dies*
     var questions = `Why are you interested in this internship, and what skills or experiences do you hope to gain?
@@ -49,27 +50,7 @@ What would your first few months look like in this role?
 Is there anything else you’d like us to know?`;
     var split = questions.split("\n");
     // firebse config
-    const firebaseConfig = {
-        apiKey: "AIzaSyCqMXF0c9ewaFpaddxF1p2iTn6AuZbeC4g",
-        authDomain: "aeee-416c3.firebaseapp.com",
-        databaseURL: "https://aeee-416c3.firebaseio.com",
-        projectId: "aeee-416c3",
-        storageBucket: "aeee-416c3.appspot.com",
-        messagingSenderId: "745101593585",
-        appId: "1:745101593585:web:56d9d0572cbe6aa376d250",
-        measurementId: "G-WMS61VSZG9",
-        storageBucket: 'gs://aeee-416c3.appspot.com'
-    };
-    var app;
-    var storage;
     
-    // everything else
-
-    onMount(() => {
-        //startVideo();
-        app = initializeApp(firebaseConfig);
-        storage = getStorage(app)
-    })
 
     var mediaRecorder;
     var recordedChunks;
@@ -132,16 +113,27 @@ Is there anything else you’d like us to know?`;
                     var blobVid = new Blob(recordedChunks);
                     transcript ="--LOADING--"
                     // upload to firebsae
-                    var vidRef = ref(storage, "video.mp4");
-                    await uploadBytes(vidRef, blobVid).then((e) => {console.log("video uploaded!")});
-
+                    console.log("starting upload")
+                    
+                    // upload
+                    if ($user_sub != ""){
+                        var date = new Date();
+                        var storagePath = $user_sub + "/"+date+".mp4"
+                        console.log(storagePath);
+                        var vidRef = ref(storage, storagePath);
+                        await uploadBytes(vidRef, blobVid).then((e) => {console.log("video uploaded!")});
+                        console.log("upload finished")
+                    } else {
+                        console.log("USER NOT SIGNED IN");
+                    }
 
                     // a tag link
                     downloadLink.href = URL.createObjectURL(blobVid);
-                    downloadLink.download = 'test.mp4';
+                    downloadLink.download = 'video.mp4';
 
                     // run speech-text
                     var downloadURL = "Placeholder";
+                    
                     await getDownloadURL(ref(storage, "video.mp4"))
                         .then((url) => {downloadURL = url; console.log(downloadURL)})
                         .catch(() => {console.log("Something went wrong!")})
@@ -230,12 +222,24 @@ Is there anything else you’d like us to know?`;
     else{
         microphoneReady = "No Permissions";
     }
+
+    function test(){
+        var hi = new Date();
+        console.log(hi);
+        console.log(hi)
+    }
+    test();
 })
 </script>
-<div class = "w-100 bg-dark text-light " style = "height: 110vh;">
+{#if user_sub == ""}
+<Navbar guest = true/>
+{:else}
+<Navbar back=true/>
+{/if}
+<div class = "w-100 text-light " style = "height: 110vh;">
     
-    <div class = "w-100 p-4 pt-5 d-flex flex-column align-items-center">
-        <span class = "fs-4">{question}</span>
+    <div class = "w-100 p-4 d-flex flex-column align-items-center">
+        <span class = "fs-4 text-dark">{question}</span>
         <br>
         <span class = "row">
             <div class = "col-md">
@@ -246,28 +250,26 @@ Is there anything else you’d like us to know?`;
             
         </span>
         <table>
-            <tr>
-              <td><img src='https://svgshare.com/i/z_L.svg' alt='Camera' width="30" height="30"/></td>
+            <tr class ="text-dark">
+              <td><i class="fa-solid fa-camera"></i></td>
               <td style="font-size:30px">{cameraReady}</td>
               <td style="width:30px"></td>
-              <td><img src='https://svgshare.com/i/za1.svg' alt='Microphone' width="30" height="30"/></td>
+              <td><i class="fa-solid fa-microphone"></i></td>
               <td style="font-size:30px">{microphoneReady}</td>
             </tr>
           </table>
         <a id = "download" download>Download Voice Recording</a>
-        
-        
-        
+            <span class = "d-flex">
             <form  id = "noVideoPrompt" on:submit = {() => {console.log("happening");startVideo();getQuestion();}}  class = "d-flex w-100 mt-2 justify-content-center align-content-center" style = "height: 50px;">
                 <!-- <i>Key Points on Resume!</i>
                     <input required placeholder = "ie. NIST Internship" class = "w-100" rows = "5" type = "text">-->
                     <input type = "submit" value = "Start Video" class = "btn btn-success" />
                 </form>
-        <span id = 'mainQuestion' class ="hide text-center">
-            <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-1" value= "Stop Video" />
+        <span id = 'mainQuestion' class ="hide">
+            <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-2 py-2" value= "Stop Video" />
         </span>
-        <input type = "button" value = "New Question" class = "btn btn-primary mt-2" on:click = {getQuestion} />  
-
+        <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {getQuestion} />  
+      </span>
     </div> 
 </div>
 <style>
@@ -282,18 +284,5 @@ video {
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
 
-}
-
-.col-md-3 {
-    background-color: rgb(230, 255, 236);
-   /* background-color:rgb(231, 250, 235);
-   rgb(173, 230, 189)
-   
-       border: 2px rgb(173, 230, 189) solid;
-*/
-}
-
-textarea {
-    border-radius: 10px;
 }
 </style>
