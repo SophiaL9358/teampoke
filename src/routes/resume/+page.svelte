@@ -25,7 +25,8 @@
 
 </script>
 
-<Navbar back = true/>
+
+<Navbar back = true guest = true/>
 <body class="">
    
     <section class = "w-100 flex-center flex-column text-center mt-5" >
