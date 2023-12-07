@@ -62,7 +62,7 @@ Do you have any questions for me?`;
         mainQuestion.classList.remove("hide");
         noVideoPrompt.classList.add("hide");
         question = "Loading...";
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        navigator.mediaDevices.getUserMedia({ video: true})
             // SOPHIA REMINDER: UR DEBIT CARD IS CONNECTED TO GOOGLE CLOUD ACC
             .then( (stream) => {
                 var mainQuestion = document.getElementById("mainQuestion");
