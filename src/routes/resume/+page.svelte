@@ -7,15 +7,20 @@
 
     let files;
     let filename;
+    let img;
    
     const onChange = () => {
         if (files && files[0]) {
             filename = files[0].name;
             console.log(filename);
+            console.log(files[0])
+            console.log("HEI")
         } else {
             console.log("Didn't work");
         }
+        console.log("HEI!!")
     }
+
 
 
 </script>
@@ -41,7 +46,11 @@
                 <p>
                     {files[0].name}
                 </p>
+                {files[0].mozFullPath} bruh
+                <embed src={files[0]} width="800px" height="2100px" />
             {/if}
+            
+
     </section>
 
 

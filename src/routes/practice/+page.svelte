@@ -7,47 +7,22 @@
 	import Navbar from '../Navbar.svelte';
     
     // its too complicated to put it in a txt file cause modules and context and svelte and *dies*
-    var questions = `Why are you interested in this internship, and what skills or experiences do you hope to gain?
-What’s the best team you’ve ever been a part of and why?
-What’s your ideal team?
-Tell me about a time you overcame a challenge or obstacle.
-Tell me about a time you had to learn something completely new.
-Can you tell me about a project or accomplishment you’re proud of, and why?
-Do you have any questions for us?
-Tell me about yourself.
-Walk me through your resume.
-How did you hear about this position?
-Why do you want to work at this company?
-Why do you want this job?
+    var questions = `Tell me about yourself.
+What attracted you to our company?
+What jobs have you had in the past?
+Have you ever had a volunteer job?
+Do you have any specific trainings that would help you if you got the job you are applying for.
+Tell me about your strengths.
+ What are your weaknesses?
+ Why are you leaving your current job?
+Describe your ideal supervisor.
+Describe your ideal work environment.
+ Do you like to work as part of a team or more by yourself?
+ How do you manage stress at work?
 Why should we hire you?
-What can you bring to the company?
-What are your greatest strengths?
-What do you consider to be your weaknesses?
-Tell me about a challenge or conflict you’ve faced at work, and how you dealt with it.
-Tell me about a time you demonstrated leadership skills.
-Tell me about a time you made a mistake.
-Tell me about a time you failed.
-What type of environment do you prefer?
-What’s your work style?
-What’s your management style?
-How do you deal with pressure or stressful situations?
-What do you like to do outside of work?
-Are you planning on having children?
-How do you stay organized?
-How do you prioritize your work?
-What are you passionate about?
-What motivates you?
-How do you like to be managed?
-Do you consider yourself successful?
-Where do you see yourself in five years?
-How do you plan to achieve your career goals?
-What are your career aspirations?
-What’s your dream job?
-What other companies are you interviewing with?
-What makes you unique?
-What should I know that’s not on your resume?
-What would your first few months look like in this role?
-Is there anything else you’d like us to know?`;
+What days of the weeks can you work?
+What time are you available to work/what shifts are you interested in?
+Do you have any questions for me?`;
     var split = questions.split("\n");
     // firebse config
     
@@ -109,6 +84,7 @@ Is there anything else you’d like us to know?`;
                 mediaRecorder.addEventListener('stop', async () => {
                     mainQuestion.classList.add("hide");
                      noVideoPrompt.classList.remove("hide");
+                     question = "---";
 
                     var blobVid = new Blob(recordedChunks);
                     transcript ="--LOADING--"
@@ -117,7 +93,11 @@ Is there anything else you’d like us to know?`;
                     
                     // upload
                     if ($user_sub != ""){
-                        var date = new Date();
+                        var dateVar = new Date();
+                        var interviewName = document.getElementById("interviewName").value;
+                        var date= interviewName+"|"+(dateVar.getMonth()+1)+"-"+dateVar.getDate()+"-"+dateVar.getFullYear();
+                        date += "|"+dateVar.getHours()+":"+dateVar.getMinutes()
+
                         var storagePath = $user_sub + "/"+date+".mp4"
                         console.log(storagePath);
                         var vidRef = ref(storage, storagePath);
@@ -129,7 +109,7 @@ Is there anything else you’d like us to know?`;
 
                     // a tag link
                     downloadLink.href = URL.createObjectURL(blobVid);
-                    downloadLink.download = 'video.mp4';
+                    downloadLink.download = 'interview.mp4';
 
                     // run speech-text
                     var downloadURL = "Placeholder";
@@ -236,10 +216,26 @@ Is there anything else you’d like us to know?`;
 {:else}
 <Navbar back=true/>
 {/if}
-<div class = "w-100 text-light " style = "height: 110vh;">
+<div class = "w-100 text-light mb-5 pb-5">
     
     <div class = "w-100 p-4 d-flex flex-column align-items-center">
         <span class = "fs-4 text-dark">{question}</span>
+        
+        <span class = "d-flex">
+            <span id = "noVideoPrompt" >
+                <form on:submit = {() => {console.log("happening");startVideo();getQuestion();}}  class = "d-flex w-100 mt-2 justify-content-center align-content-center" style = "height: 50px;">
+                    <!-- <i>Key Points on Resume!</i>
+                        <input required placeholder = "ie. NIST Internship" class = "w-100" rows = "5" type = "text">-->
+                        <input type = "submit" value = "Start Video" class = "btn btn-success" />
+                </form>
+            </span>
+            
+            <span id = 'mainQuestion' class ="hide">
+                <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-2 py-2" value= "Stop Video" />
+                <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {getQuestion} />  
+            </span>
+        </span>
+
         <br>
         <span class = "row">
             <div class = "col-md">
@@ -251,25 +247,20 @@ Is there anything else you’d like us to know?`;
         </span>
         <table>
             <tr class ="text-dark">
-              <td><i class="fa-solid fa-camera"></i></td>
+              <td><i class="fa-solid fa-camera me-1"></i></td>
               <td style="font-size:30px">{cameraReady}</td>
-              <td style="width:30px"></td>
-              <td><i class="fa-solid fa-microphone"></i></td>
+              <td class = "px-1" style="width:30px"></td>
+              <td><i class="fa-solid fa-microphone me-1"></i></td>
               <td style="font-size:30px">{microphoneReady}</td>
             </tr>
           </table>
-        <a id = "download" download>Download Voice Recording</a>
-            <span class = "d-flex">
-            <form  id = "noVideoPrompt" on:submit = {() => {console.log("happening");startVideo();getQuestion();}}  class = "d-flex w-100 mt-2 justify-content-center align-content-center" style = "height: 50px;">
-                <!-- <i>Key Points on Resume!</i>
-                    <input required placeholder = "ie. NIST Internship" class = "w-100" rows = "5" type = "text">-->
-                    <input type = "submit" value = "Start Video" class = "btn btn-success" />
-                </form>
-        <span id = 'mainQuestion' class ="hide">
-            <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-2 py-2" value= "Stop Video" />
-        </span>
-        <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {getQuestion} />  
-      </span>
+        
+        <div class = "border border-2 p-3">
+            <input id ="interviewName" type = "text" value = "Practice Interview" placeholder="Name for Interview" />
+            <a id = "download" download>Download Voice Recording</a>
+           
+        </div>
+        
     </div> 
 </div>
 <style>
