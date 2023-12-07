@@ -34,13 +34,13 @@
 
     <!-- Top button container -->
     <div class="button-container-top">
-      <button class="btn nc-light-blue custom-button">Start Interview</button>
-      <button class="btn nc-light-orange custom-button">Past Interviews</button>
+      <button class="btn bg-contrast-light-blue custom-button">Start Interview</button>
+      <button class="btn bg-contrast-light-orange custom-button">Past Interviews</button>
     </div>
 
     <!-- Bottom button container -->
     <div class="button-container-bottom">
-      <button class="btn nc-dark-orange custom-button">Update Resume</button>
+      <button class="btn bg-contrast-orange custom-button">Update Resume</button>
     </div>
   </div>
 </div>
