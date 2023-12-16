@@ -63,10 +63,10 @@ Do you have any questions for me?`;
         mainQuestion.classList.remove("hide");
         noVideoPrompt.classList.add("hide");
         question = "Loading...";
-        navigator.mediaDevices.getUserMedia({ video: true })
+        navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: "user" }})
             // SOPHIA REMINDER: UR DEBIT CARD IS CONNECTED TO GOOGLE CLOUD ACC
             .then( (stream) => {
-                var mainQuestion = document.getElementById("mainQuestion");
+                var mainQuestion  = document.getElementById("mainQuestion");
                 var noVideoPrompt = document.getElementById("noVideoPrompt");
                 video.srcObject = stream;
                 
@@ -241,7 +241,7 @@ Do you have any questions for me?`;
         <br>
         <span class = "row">
             <div class = "col-md">
-                <video id = "streamVid" autoplay = "true">
+                <video id = "streamVid" autoplay = "true" muted>
                     <track kind = "captions">
                 </video>
             </div>
