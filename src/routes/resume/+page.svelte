@@ -47,8 +47,7 @@
                 <p>
                     {files[0].name}
                 </p>
-                {files[0].mozFullPath} bruh
-                <embed src={files[0]} width="800px" height="2100px" />
+                <embed src={files[0].mozFullPath} width="800px" height="2100px" />
             {/if}
             
 

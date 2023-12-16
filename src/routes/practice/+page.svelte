@@ -1,11 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-    import axios from 'axios'
+    //import axios from 'axios';
     import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
     import DetectRTC from "detectrtc/DetectRTC";
     import {user_sub, storage, app} from "$lib/global.js";
 	import Navbar from '../Navbar.svelte';
-    
     // its too complicated to put it in a txt file cause modules and context and svelte and *dies*
     var questions = `Tell me about yourself.
 What attracted you to our company?
@@ -53,6 +52,8 @@ Do you have any questions for me?`;
             console.log(data.toString());
         })*/
         question = split[randomIndex];
+        let utterance = new SpeechSynthesisUtterance(question);
+        speechSynthesis.speak(utterance);
     }
     const startVideo = async () => {
         video = document.querySelector("#streamVid");
@@ -178,6 +179,7 @@ Do you have any questions for me?`;
             });
         
     }
+
     let cameraReady = "";
     let microphoneReady = "";
     DetectRTC.load(function() {
