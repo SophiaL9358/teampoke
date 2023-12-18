@@ -1,59 +1,62 @@
 <script>
     /** @type {import('./$types').LayoutData} */
     export let data;
-	import Navbar from "../Navbar.svelte";
-   
-
+	import Navbar from "../Navbar.svelte";   
+    import {user_sub, storage, app} from "$lib/global.js";
+	import { getBlob, getBytes, ref, uploadBytes } from "firebase/storage";
+	import { onMount } from "svelte";
 
     let files;
-    let filename;
-    let img;
-   
-    const onChange = () => {
-        if (files && files[0]) {
-            filename = files[0].name;
-            console.log(filename);
-            console.log(files[0])
-            console.log("HEI")
-        } else {
-            console.log("Didn't work");
+    var storagePath = $user_sub+"/Resume/resume.pdf";
+    onMount(() => {
+        getBlob(ref(storage, storagePath)).then((file)=>{
+            var myiFrame = document.getElementById("myiFrame");
+            myiFrame.src=URL.createObjectURL(file);
+            console.log(file.name)
+            files = [file]
+        })
+    })
+
+    const onFileSelected = async (e) => {
+        const fileList = e.target.files;
+        files = fileList;
+        if (fileList?.length > 0) {
+            var myiFrame = document.getElementById("myiFrame");
+            myiFrame.src = URL.createObjectURL(fileList[0])
+            console.log(fileList[0]);
+            await uploadBytes(ref(storage, storagePath), fileList[0]).then((e) => {console.log("video uploaded!")});
         }
-        console.log("HEI!!")
     }
-
-
 
 </script>
 
 
-<Navbar back = true guest = true/>
-<body class="">
-   
-    <section class = "w-100 flex-center flex-column text-center mt-5" >
 
-
-        <!-- https://gist.github.com/dahnielson/59566b3d91cc8cf09c13d1419604a8a2 -->
-        <div class = "flex-center text-center w-100">
-            <button class = "poke-btn bg-contrast-light-orange">
-                <label for="files" class="upload-btn ">
-                    Upload Resume
+<body>
+    <Navbar back = true />
+    <div class = "row w-100">
+        <div class = "col-md-4 p-4 text-center flex-column fs-5">
+            <!-- {#if files}
+                Name: {files[0].name}
+                <br>
+                Uploaded: 12/17/23 (change)
+                <br>
+            {/if} -->
+            Click the button below to upload your resume!
+            <br>
+            <br>
+            <button class = "bg-contrast-light-orange poke-btn">
+                <label for="file-selector" class="uploadFileBtn">
+                        Upload Resume   
                 </label>
             </button>
-           
-            <input id="files" style="visibility:hidden; display: none;" type="file" bind:files accept="application/pdf,application/msword,
-            application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-          </div>
-            {#if files && files[0]}
-                <p>
-                    {files[0].name}
-                </p>
-                {files[0].mozFullPath} bruh
-                <embed src={files[0]} width="800px" height="2100px" />
-            {/if}
-            
-
-    </section>
-
+            <input type = "file" class = "text-break hide" id = "file-selector" accept=".pdf" on:change={onFileSelected} />    
+        </div>
+        <div class = "col-md-8 text-center">
+            <iframe title = "resume" id = "myiFrame" class = "w-100" style = "height:calc(100vh - 80px);"/>
+        </div>
+    </div>
+    
 
 </body>
 <style>

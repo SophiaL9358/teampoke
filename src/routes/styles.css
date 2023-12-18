@@ -23,12 +23,12 @@ h1 {
 	padding: 10px 20px 10px 20px;
 	border-radius: 0.9em;
 	border-color: rgba(0, 0, 0, 0);
+	transition: 200ms;
 }
 
 .poke-btn:hover > * {
 	cursor: pointer;
 }
-
 .bg-light-green {
 	background-color: #B5BB1F;
 }

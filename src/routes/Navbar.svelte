@@ -1,18 +1,22 @@
 <script>
-    import { logoutAndReturn } from "$lib/global.js";
+    import { logoutAndReturn, user_sub } from "$lib/global.js";
     export var back = false;
     export var guest = false;
+
+    if ($user_sub == "") {
+        guest = true;
+    }
 </script>
 
 <section class = "w-100 bg-contrast-blue flex-center px-5 fs-5" style = "height: 80px">
     {#if guest}
         <div class = "text-light me-auto">
-            <a href = "/"><i class="fa-solid fa-arrow-left-long "></i>&nbsp;&nbsp;Back</a>
+            <a href = "/"><i class="fa-solid fa-arrow-left-long "></i>&nbsp;&nbsp;Back to Login</a>
         </div>
     {/if}
-    {#if back}
+    {#if back && !guest}
         <div class = "text-light">
-            <a href = "/home"><i class="fa-solid fa-arrow-left-long"></i>&nbsp;&nbsp;Back</a>
+            <a href = "/home"><i class="fa-solid fa-arrow-left-long"></i>&nbsp;&nbsp;Back To Home</a>
         </div>
     {/if}
     {#if !guest}

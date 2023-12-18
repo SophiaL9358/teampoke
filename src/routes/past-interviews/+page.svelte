@@ -9,10 +9,10 @@
     var none = false;
     var interviews = []
     var show;
-    const listRef = ref(storage, $user_sub+"/")
+    const listRef = ref(storage, $user_sub+"/Videos/")
 
     function startDownload(fileName){
-        getBlob(ref(storage, $user_sub+'/'+fileName)).then((blob)=> {
+        getBlob(ref(storage, $user_sub+'/Videos/'+fileName)).then((blob)=> {
             downloadLink.href = URL.createObjectURL(blob);
             downloadLink.download = fileName;
             downloadLink.click();
@@ -42,7 +42,7 @@
     
     function deleteFile(filename, name){
         if (confirm("Are you sure you want to delete \""+name+"\"?")){
-            deleteObject(ref(storage, $user_sub+"/"+filename)).then(()=>{getInterviews();});
+            deleteObject(ref(storage, $user_sub+"/Videos/"+filename)).then(()=>{getInterviews();});
         }  
     }
 
@@ -52,9 +52,9 @@
             console.log(time);
             var newName = name+"|"+date+"|"+time+".mp4"
             getBlob(ref(storage, $user_sub+'/'+filename)).then( async (blob)=> {
-                await uploadBytes(ref(storage, $user_sub+'/'+newName), blob).then((e) => {
+                await uploadBytes(ref(storage, $user_sub+'/Videos/'+newName), blob).then((e) => {
                     console.log("video uploaded!")
-                    deleteObject(ref(storage, $user_sub+"/"+filename)).then(()=>{getInterviews();});
+                    deleteObject(ref(storage, $user_sub+"/Videos/"+filename)).then(()=>{getInterviews();});
                 });
                 
             });
