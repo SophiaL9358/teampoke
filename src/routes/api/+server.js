@@ -87,7 +87,7 @@ function generateFirstQuestion() {
 }
 
 function generatePositionQuestion(position) {
-    return `Generate a specialized interview question based on the position the applicant is applying to.
+    return `Generate a simple and clear interview question based on the position the applicant is applying to.
     
     Job: Marine Biology
     Question: In your opinion, what's one of the most effective strategies for preserving endangered marine species?

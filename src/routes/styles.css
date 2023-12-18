@@ -7,10 +7,10 @@ h1 {
 	font-size: 2.6em;
 }
 .hide {
-	display: none;
-	visibility: hidden;
-	height: 0px;
-	width: 0;
+	display: none !important;
+	visibility: hidden !important;
+	height: 0px !important;
+	width: 0px !important;
 }
 
 .flex-center {

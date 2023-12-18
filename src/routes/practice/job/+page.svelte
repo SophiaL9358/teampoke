@@ -198,8 +198,35 @@
 {:else}
 <Navbar back=true/>
 {/if}
-<div class = "w-100 text-light mb-5 pb-5">
+<div class = "w-100 text-light mb-5 pb-5 flex-center flex-column">
+    <div id = "setup" class = "border border-2 p-2 mt-5 text-dark text-center d-flex flex-column align-items-center" style = "width: 600px;">
+        <i>Setup for the next interview practice</i>
+        
+        <span class ="d-flex w-100 text-nowrap mt-3">
+            <b>Job Name:</b>&nbsp;&nbsp;
+            <input id ="jobName" type = "text" class = "w-100" value = "" placeholder="Name for Job" />
+        </span>
+        <span class ="d-flex w-100 text-nowrap mt-4">
+            <b>Interview Name:</b>&nbsp;&nbsp;
+            <input id ="interviewName" type = "text" class = "w-100" value = "Job Specific Practice Interview" placeholder="Name for Interview" />
+        </span>
+        <span class = "w-100 text-start text-secondary">
+            *Interview name can be edited later in the "Past Interviews" section on the home page
+        </span>
+        
+        <table class = "mt-3 mb-2">
+            <tr class ="text-dark">
+              <td><i class="fa-solid fa-camera me-1"></i></td>
+              <td style="font-size:30px">{cameraReady}</td>
+              <td class = "px-1" style="width:30px"></td>
+              <td><i class="fa-solid fa-microphone me-1"></i></td>
+              <td style="font-size:30px">{microphoneReady}</td>
+            </tr>
+        </table>
+    </div>
     
+
+
     <div class = "w-100 p-4 d-flex flex-column align-items-center text-center">
         <span class = "fs-4 text-dark">{question}</span>
         
@@ -217,33 +244,8 @@
                 <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {getQuestion} />  
             </span>
         </span>
+        <br>
         <a id = "download" class = "mt-3" download>Download Video Recording of Practice</a>
-        <div id = "setup" class = "border border-2 p-2 mt-3 text-dark text-center d-flex flex-column align-items-center" style = "width: 600px;">
-            <i>Setup for the next interview practice</i>
-            
-            <span class ="d-flex w-100 text-nowrap mt-3">
-                <b>Job Name:</b>&nbsp;&nbsp;
-                <input id ="jobName" type = "text" class = "w-100" value = "" placeholder="Name for Job" />
-            </span>
-            <span class ="d-flex w-100 text-nowrap mt-4">
-                <b>Interview Name:</b>&nbsp;&nbsp;
-                <input id ="interviewName" type = "text" class = "w-100" value = "Job Specific Practice Interview" placeholder="Name for Interview" />
-            </span>
-            <span class = "w-100 text-start text-secondary">
-                *Interview name can be edited later in the "Past Interviews" section on the home page
-            </span>
-            
-            <table class = "mt-3 mb-2">
-                <tr class ="text-dark">
-                  <td><i class="fa-solid fa-camera me-1"></i></td>
-                  <td style="font-size:30px">{cameraReady}</td>
-                  <td class = "px-1" style="width:30px"></td>
-                  <td><i class="fa-solid fa-microphone me-1"></i></td>
-                  <td style="font-size:30px">{microphoneReady}</td>
-                </tr>
-            </table>
-        </div>
-
         <span class = "row hide" id = "videoStreamRow">
             <div class = "col-md">
                 <video id = "streamVid" autoplay = "true">
@@ -252,11 +254,8 @@
             </div>
             
         </span>
-        
-        
-        
-    </div> 
-</div>
+    </div>
+</div> 
 <style>
     
 video {
