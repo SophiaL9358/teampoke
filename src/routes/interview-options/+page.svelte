@@ -1,24 +1,16 @@
 <script>
+	import Navbar from "../Navbar.svelte";
+
 </script>
 
 <style>
-  .button-container-top {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px; /* Adjust padding as needed */
-    margin-bottom: 20px; /* Adjust spacing between top and bottom button containers */
-  }
-
-  .button-container-bottom {
-    display: flex;
-    justify-content: center;
-    padding: 10px; /* Adjust padding as needed */
-  }
-
-  .custom-button {
-    height: 100px; /* Adjust height as needed */
-    width: 250px;
+  button {
+    padding: 50px 75px 50px 75px;
     margin: 0 30px; /* Adjust spacing between buttons as needed */
+  }
+  .custom-button:hover {
+    transition: 200ms;
+    background-color: white;
   }
 
   .header {
@@ -27,20 +19,23 @@
     margin-bottom: 1px;
   }
 </style>
-
-<div class="w-100 flex-center" style="height: 120vh;">
+<Navbar back = true />
+<div class="w-100 flex-center mt-5 ">
   <div class="container">
     <div class="header" style="height: 100px;"> Please chose an interview type:</div>
 
     <!-- Top button container -->
-    <div class="button-container-top">
-      <button class="btn bg-contrast-light-blue custom-button">Start Interview</button>
-      <button class="btn bg-contrast-light-orange custom-button">Past Interviews</button>
+    <div class="flex-center mb-5">
+      <a href = "/practice"><button class="poke-btn bg-contrast-light-blue fs-4">Random Questions</button></a>
+      <button class="poke-btn bg-google-blue fs-4">AI, Self-Paced Questions</button>
     </div>
 
     <!-- Bottom button container -->
-    <div class="button-container-bottom">
-      <button class="btn bg-contrast-orange custom-button">Update Resume</button>
+    <div class="flex-center">
+      <a href = "/practice/job"><button class="poke-btn bg-contrast-light-orange fs-4">Job Specific Questions</button></a>
+      <button class="poke-btn bg-contrast-orange fs-4">Resume Questions</button>
     </div>
   </div>
 </div>
+<br>
+<br>

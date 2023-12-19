@@ -7,10 +7,10 @@ h1 {
 	font-size: 2.6em;
 }
 .hide {
-	display: none;
-	visibility: hidden;
-	height: 0px;
-	width: 0;
+	display: none !important;
+	visibility: hidden !important;
+	height: 0px !important;
+	width: 0px !important;
 }
 
 .flex-center {
@@ -23,6 +23,7 @@ h1 {
 	padding: 10px 20px 10px 20px;
 	border-radius: 0.9em;
 	border-color: rgba(0, 0, 0, 0);
+	transition: 200ms;
 }
 .speak-btn {
 	background-color: transparent;
@@ -32,7 +33,6 @@ h1 {
 .poke-btn:hover > * {
 	cursor: pointer;
 }
-
 .bg-light-green {
 	background-color: #B5BB1F;
 }

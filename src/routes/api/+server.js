@@ -87,13 +87,13 @@ function generateFirstQuestion() {
 }
 
 function generatePositionQuestion(position) {
-    return `Generate a specialized interview question based on the position the applicant is applying to
+    return `Generate a simple and clear interview question based on the position the applicant is applying to.
     
-    Job: Biology
-    Question: Moving on, can you briefly describe your research and laboratory experience?
-    Job: Computer science
-    Question: As you know, this is a programming  job. Can you explain what a class is?
-    JOb: ${position}
+    Job: Marine Biology
+    Question: In your opinion, what's one of the most effective strategies for preserving endangered marine species?
+    Job: Civil Engineer
+    Question: What made you decide to become a civil engineer?
+    Job: ${position}
     Question: `;
   }
 

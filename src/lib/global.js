@@ -25,13 +25,13 @@ const firebaseConfig = {
 };
 export var app;
 export var storage;
-
+export var db;
 // everything else
 
 
 app = initializeApp(firebaseConfig);
 storage = getStorage(app)
-
+db = getFirestore(app);
 
 /*
 
