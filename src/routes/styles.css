@@ -25,6 +25,10 @@ h1 {
 	border-color: rgba(0, 0, 0, 0);
 	transition: 200ms;
 }
+.speak-btn {
+	background-color: transparent;
+	border: none;
+}
 
 .poke-btn:hover > * {
 	cursor: pointer;

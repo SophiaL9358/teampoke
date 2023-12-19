@@ -1,11 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-    import axios from 'axios'
+    //import axios from 'axios';
     import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
     import DetectRTC from "detectrtc/DetectRTC";
     import {user_sub, storage, app} from "$lib/global.js";
 	import Navbar from '../Navbar.svelte';
-    
     // its too complicated to put it in a txt file cause modules and context and svelte and *dies*
     var questions = `Tell me about yourself.
 What attracted you to our company?
@@ -43,7 +42,7 @@ Do you have any questions for me?`;
     "Authorization": SPEECH_TEXT_API_TOKEN,
     "Content-Type": "application/json"
     }
-
+    const synth = window.speechSynthesis;
     const getQuestion = async () => {
         var randomIndex =Math.trunc(Math.random()*(split.length));
         
@@ -53,6 +52,9 @@ Do you have any questions for me?`;
             console.log(data.toString());
         })*/
         question = split[randomIndex];
+        synth.cancel();
+        let utterance = new SpeechSynthesisUtterance(question);
+        speechSynthesis.speak(utterance);
     }
     const startVideo = async () => {
         video = document.querySelector("#streamVid");
@@ -62,10 +64,10 @@ Do you have any questions for me?`;
         mainQuestion.classList.remove("hide");
         noVideoPrompt.classList.add("hide");
         question = "Loading...";
-        navigator.mediaDevices.getUserMedia({ video: true })
+        navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: "user" }})
             // SOPHIA REMINDER: UR DEBIT CARD IS CONNECTED TO GOOGLE CLOUD ACC
             .then( (stream) => {
-                var mainQuestion = document.getElementById("mainQuestion");
+                var mainQuestion  = document.getElementById("mainQuestion");
                 var noVideoPrompt = document.getElementById("noVideoPrompt");
                 video.srcObject = stream;
                 
@@ -109,7 +111,7 @@ Do you have any questions for me?`;
 
                     // a tag link
                     downloadLink.href = URL.createObjectURL(blobVid);
-                    downloadLink.download = 'interview.mp4';
+                    downloadLink.download = document.getElementById("interviewName").value+".mp4";
 
                     // run speech-text
                     var downloadURL = "Placeholder";
@@ -178,6 +180,12 @@ Do you have any questions for me?`;
             });
         
     }
+    const repeatQuestion = async () => {
+    synth.cancel();
+    let utterance = new SpeechSynthesisUtterance(question);
+    speechSynthesis.speak(utterance);
+}
+
     let cameraReady = "";
     let microphoneReady = "";
     DetectRTC.load(function() {
@@ -216,11 +224,12 @@ Do you have any questions for me?`;
 {:else}
 <Navbar back=true/>
 {/if}
-<div class = "w-100 text-light mb-5 pb-5">
-    
-    <div class = "w-100 p-4 d-flex flex-column align-items-center">
+<div class = "w-200 text-dark mb-5 pb-5">
+    <div class = "w-200 p-2 d-flex flex-column align-items-center">
+        <div class = "d-inline-flex">
+        <button id = "repeatspeechbtn" class = "speak-btn" on:click={() => {repeatQuestion();}}><i class="fa-solid fa-volume-up"></i></button>
         <span class = "fs-4 text-dark">{question}</span>
-        
+    </div>
         <span class = "d-flex">
             <span id = "noVideoPrompt" >
                 <form on:submit = {() => {console.log("happening");startVideo();getQuestion();}}  class = "d-flex w-100 mt-2 justify-content-center align-content-center" style = "height: 50px;">
@@ -229,7 +238,6 @@ Do you have any questions for me?`;
                         <input type = "submit" value = "Start Video" class = "btn btn-success" />
                 </form>
             </span>
-            
             <span id = 'mainQuestion' class ="hide">
                 <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-2 py-2" value= "Stop Video" />
                 <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {getQuestion} />  
@@ -239,7 +247,7 @@ Do you have any questions for me?`;
         <br>
         <span class = "row">
             <div class = "col-md">
-                <video id = "streamVid" autoplay = "true">
+                <video id = "streamVid" autoplay = "true" muted>
                     <track kind = "captions">
                 </video>
             </div>
