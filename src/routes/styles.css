@@ -24,6 +24,10 @@ h1 {
 	border-radius: 0.9em;
 	border-color: rgba(0, 0, 0, 0);
 }
+.speak-btn {
+	background-color: transparent;
+	border: none;
+}
 
 .poke-btn:hover > * {
 	cursor: pointer;
