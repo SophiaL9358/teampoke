@@ -34,7 +34,7 @@
                         Job-Specific Questions 
                         <i class="fa-solid fa-user"></i>
                   </button></a> 
-                  <a href = ""><button class = "poke-btn text-dark w-100 mt-3" style="background-color:#80ED99;">
+                  <a href = "/practice/resume"><button class = "poke-btn text-dark w-100 mt-3" style="background-color:#80ED99;">
                         Resume-Specific Questions 
                         <i class="fa-regular fa-file"></i>
                   </button></a> 
