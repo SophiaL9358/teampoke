@@ -53,7 +53,7 @@
             <input type = "file" class = "text-break hide" id = "file-selector" accept=".pdf" on:change={onFileSelected} />    
         </div>
         <div class = "col-md-8 text-center">
-            <iframe title = "resume" id = "myiFrame" class = "w-100" style = "height:calc(100vh - 80px);"/>
+            <iframe title = "resume" id = "myiFrame" class = "w-100" style = "height:calc(100vh - 110px); margin-top: 10px;"/>
         </div>
     </div>
 

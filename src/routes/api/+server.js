@@ -51,6 +51,14 @@ export async function POST ({ request }) { // submit vote (i know this isnt righ
             temperature: 0.6,
             max_tokens: 1024
         });
+    }else if (input.startsWith("RESUME QUESTION")){
+      var splitInput = input.split(",");
+      completion = await openai.createCompletion({
+          model: "text-davinci-003",
+          prompt: generateResumeQuestion(splitInput[1]),
+          temperature: 0.6,
+          max_tokens: 1024
+      });
     }else {
       completion = await openai.createCompletion({
         model: "text-davinci-003",
@@ -96,6 +104,17 @@ function generatePositionQuestion(position) {
     Job: ${position}
     Question: `;
   }
+  function generateResumeQuestion(resumeSnip) {
+    return `Generate a simple and clear interview question based an applicant's resume.
+    
+    Resume: h Netlify. Engineering a remote controlled Lego rover with an onboard Raspberry Pi, programming inpython, using a motor hat, photoresistor sensor, and temperature sensor.
+    Question: Please elaborate more on the sensors used in yur lego rover project
+    Resume:  Building and programming an underwater glider using a syringe and servo to take in/expelwater and complete a yo (diving and res
+    Question: How would you ensure the glider went all the way to the surface?
+    Job: ${resumeSnip}
+    Question: `;
+  }
+
 
 function generatePrompt(input) {
   console.log(input);
