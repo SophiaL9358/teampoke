@@ -56,7 +56,6 @@
             <iframe title = "resume" id = "myiFrame" class = "w-100" style = "height:calc(100vh - 110px); margin-top: 10px;"/>
         </div>
     </div>
-    
 
 </body>
 <style>
