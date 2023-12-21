@@ -6,9 +6,8 @@
 </script>
 <Navbar/>
 <div class ="text-center w-100 my-5">
-      <h2>Welcome!</h2>
 </div>
-<div class = 'w-100 flex-center' >
+<!-- <div class = 'w-100 flex-center' >
       
       <a href = "/practice"><button class = "poke-btn fs-4 test3 text-light" style = "background-color:#034078;"> 
             Start Interview
@@ -18,7 +17,7 @@
       <a href = "/past-interviews"><button class = "poke-btn bg-contrast-light-orange fs-4 mx-5 test3" style = "background-color:#80ED99;"> Past Interviews </button></a>
       <a href = "/resume"><button class = "poke-btn bg-contrast-orange fs-4 test3 text-light" style = "background-color:#2B7F80;"> Update Resume </button></a>
 </div>
-<br><br>
+<br><br> -->
 <div class = 'w-100 px-5' >
       <div class = "w-100 border-top border-bottom border-2 row py-4">
             <div class = "col-sm-6">
@@ -60,14 +59,14 @@
 </div>
 <br>
 <br>
-<div class = 'w-100 flex-center flex-column' >
+<!-- <div class = 'w-100 flex-center flex-column' >
       
       <a href = "/interview-options"><button class = "poke-btn fs-4 text-light test2" style="background-color:#001F54;"> 
             Start Interview 
       </button></a>
       <a href = "/past-interviews"><button class = "poke-btn bg-contrast-light-orange fs-4 my-3 text-light test2"  style = "background-color:#034078"> Past Interviews </button></a>
       <a href = "/resume"><button class = "poke-btn bg-contrast-orange fs-4 test2" style = "background-color: #91C4F2;"> Update Resume </button></a>
-</div>
+</div> -->
 
 <style>
       .test1 {
