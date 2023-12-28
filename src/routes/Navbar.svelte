@@ -8,7 +8,7 @@
     }
 </script>
 
-<section class = "w-100 bg-contrast-blue flex-center px-5 fs-5" style = "height: 70px; margin-bottom: 10px;">
+<section class = "w-100 flex-center px-5 fs-5" style = "height: 70px; margin-bottom: 10px; background-color: #2B7F80;">
     {#if guest}
         <div class = "text-light me-auto">
             <a href = "/"><i class="fa-solid fa-arrow-left-long "></i>&nbsp;&nbsp;Back to Login</a>

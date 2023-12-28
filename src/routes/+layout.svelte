@@ -1,6 +1,4 @@
 <script>
-	import "../app.pcss";
-    import Footer from './Footer.svelte';
     import './styles.css';
 </script>
 
