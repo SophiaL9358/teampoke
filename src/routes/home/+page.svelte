@@ -1,23 +1,14 @@
 <script>
 	import Navbar from "../Navbar.svelte";
-      import { user_sub } from "$lib/global.js";
+      import { user_sub, user_name } from "$lib/global.js";
 
       console.log($user_sub);
 </script>
 <Navbar/>
-<div class ="text-center w-100 my-5">
+<br>
+<div class = "container-fluid px-5 pt-2 pb-4 text-center">
+      <h4>Welcome {$user_name}!</h4>
 </div>
-<!-- <div class = 'w-100 flex-center' >
-      
-      <a href = "/practice"><button class = "poke-btn fs-4 test3 text-light" style = "background-color:#034078;"> 
-            Start Interview
-            <br><br>
-            <i class="fa-solid fa-circle-user" style="font-size:5em;"></i>
-      </button></a>
-      <a href = "/past-interviews"><button class = "poke-btn bg-contrast-light-orange fs-4 mx-5 test3" style = "background-color:#80ED99;"> Past Interviews </button></a>
-      <a href = "/resume"><button class = "poke-btn bg-contrast-orange fs-4 test3 text-light" style = "background-color:#2B7F80;"> Update Resume </button></a>
-</div>
-<br><br> -->
 <div class = 'w-100 px-5' >
       <div class = "w-100 border-top border-bottom border-2 row py-4">
             <div class = "col-sm-6">
@@ -59,26 +50,6 @@
 </div>
 <br>
 <br>
-<!-- <div class = 'w-100 flex-center flex-column' >
-      
-      <a href = "/interview-options"><button class = "poke-btn fs-4 text-light test2" style="background-color:#001F54;"> 
-            Start Interview 
-      </button></a>
-      <a href = "/past-interviews"><button class = "poke-btn bg-contrast-light-orange fs-4 my-3 text-light test2"  style = "background-color:#034078"> Past Interviews </button></a>
-      <a href = "/resume"><button class = "poke-btn bg-contrast-orange fs-4 test2" style = "background-color: #91C4F2;"> Update Resume </button></a>
-</div> -->
 
 <style>
-      .test1 {
-            height: 300px;
-            padding: 20px 0;
-      }
-      .test2 {
-            width: 60vw;
-            padding: 20px 0;
-      }
-      .test3{
-            height: 350px;
-            width: 300px;
-      }
 </style>

@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 // @ts-nocheck
     import { setDoc, doc } from 'firebase/firestore';
     import jquery from 'jquery';
@@ -45,7 +45,7 @@ function oauth2SignIn() {
     // Parameters to pass to OAuth 2.0 endpoint.
     var windowHref = (window.location.href).toString();
     console.log()
-    var params = {'client_id': '802220089604-39b239d5mjprd4ududun6i4ve4ma88c2.apps.googleusercontent.com', // TODO: Change id...
+    var params = {'client_id': '1083819190018-jmgb2p9eucom10vu675d19nkbcc1e35o.apps.googleusercontent.com', // TODO: Change id...
                 'redirect_uri': windowHref,
                 'response_type': 'token',
                 'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -103,7 +103,6 @@ async function trySampleRequest() {
 
 </script>
 
-<!-- Google Auth Script-->
 <svelte:head>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </svelte:head>
@@ -121,4 +120,4 @@ async function trySampleRequest() {
         padding-bottom: 2em;
     }
     
-</style>
+</style> -->

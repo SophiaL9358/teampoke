@@ -5,10 +5,11 @@ import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { onMount } from "svelte";
 
 export var user_sub = writable("");
-
+export var user_name = writable("");
 
 export function logoutAndReturn(){
     user_sub.set("");
+    user_name.set("")
     window.location.pathname = '/';
 }
 
