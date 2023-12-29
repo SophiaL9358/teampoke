@@ -72,7 +72,7 @@
     
 
 </script>
-<Navbar back = true />
+<Navbar/>
 <br>
 <section class = "w-100 text-center pb-5 mt-5">
     <h2>Past Interviews</h2>

@@ -2,9 +2,13 @@
     import { logoutAndReturn, user_sub } from "$lib/global.js";
     export var back = false;
     export var guest = false;
+    
 
     if ($user_sub == "") {
         guest = true;
+        
+    } else if (window.location.pathname != '/home'){
+        back = true;
     }
 </script>
 
@@ -13,12 +17,12 @@
         <div class = "text-light me-auto">
             <a href = "/"><i class="fa-solid fa-arrow-left-long "></i>&nbsp;&nbsp;Back to Login</a>
         </div>
-    {/if}
-    {#if back && !guest}
-        <div class = "text-light">
+    {:else if back}
+        <div class = "text-light me-auto">
             <a href = "/home"><i class="fa-solid fa-arrow-left-long"></i>&nbsp;&nbsp;Back To Home</a>
         </div>
     {/if}
+    
     {#if !guest}
         <div class = "ms-auto h-100">
             <button class = "btn px-3 fs-5 h-100" id = "logoutBtn" on:click = {logoutAndReturn}>
