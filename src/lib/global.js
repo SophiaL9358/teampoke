@@ -4,15 +4,6 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { onMount } from "svelte";
 
-export var user_sub = writable("");
-export var user_name = writable("");
-
-export function logoutAndReturn(){
-    user_sub.set("");
-    user_name.set("")
-    window.location.pathname = '/';
-}
-
 const firebaseConfig = {
     apiKey: "AIzaSyCqMXF0c9ewaFpaddxF1p2iTn6AuZbeC4g",
     authDomain: "aeee-416c3.firebaseapp.com",
@@ -27,25 +18,45 @@ const firebaseConfig = {
 export var app;
 export var storage;
 export var db;
-// everything else
 
+export var user_sub = writable("");
+export var user_name = writable("");
 
 app = initializeApp(firebaseConfig);
 storage = getStorage(app)
 db = getFirestore(app);
 
-/*
-
-const firebaseConfig = {
-    apiKey: "AIzaSyDIMSd2qMl2vltWtTDgNjRFlgTWl73jMXw",
-    authDomain: "mock-interview-app-403217.firebaseapp.com",
-    projectId: "mock-interview-app-403217",
-    storageBucket: "mock-interview-app-403217.appspot.com",
-    messagingSenderId: "1083819190018",
-    appId: "1:1083819190018:web:046cef3647a6736bd0841b",
-    measurementId: "G-K0RYJF8CBX"
-};
+export function logoutAndReturn(){
+    user_sub.set("");
+    user_name.set("")
+    window.location.pathname = '/';
+}
 
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);*/
+var rawAdj = "joyous, cheery, gleeful, playful, jovial, witty, "+
+"bubbly, hilarious, piquant, jocular, snazzy, quirky, pleased, amusing, "+
+"sunny, radiant, fun, lively, happy, merry, blissful, "+
+"buoyant, zippy, brisk, quick, snappy, wacky, smart, "+
+"fresh, peppy, bright, swift, swell, chirpy, gleamy, fancy, perky"
+var rawNoun = "quirkball, zanymoth, jinxaroo, dizzicorn, whoozit, "+
+"bumblegum, zoodlebug, mirthbot, quibblesnack, wobblefrog, jigglezip, "+
+"snazzlebee, doodleflip, wackyjazz, noodlejoy, bliparoo, quackle, zigglypuff, "+
+"dazzleroo, bunkaroo, quizzlepop, jollybug, zippyzap, bofflebee, snickaroo, "+
+"quibbletwirl, jigglywump, doodledrop, gleebug, quirklepop, zanyzap, bubbleroo, "+
+"dizzysnap, jogglewig, fizzbuzz, quizzler, zippydoo, boparoo, jollytwist, noodlebug, "+
+"wobblewham, jumblebee, zestaroo, dorkaroo, quirkybop, zingaroo, snazzler, jinxaroo, quackaroo, wackywoo"
+var rawNoun2 = "laughter, joyfulness, pizzazz, ticklish, frolic, bubbles, harmony, "+
+"snuggles, giggles, jamboree, whiskers, jollity, gleaming, chuckles, flair, banter, "+
+"mischief, zephyr, bonanza, twinkle, prism, mirth, jubilee, quirks, zinger, grin, snazzy, "+
+"tango, fiesta, frolic, bliss, dazzle, jazz, bounce, puddle, quirk, fizz, funk, zest, "+
+"jolt, wink, spritz, zoom, glee, blip, riff, jive, zap, jolt"
+var adj = rawAdj.split(", ")
+var noun = rawNoun.split(", ")
+var noun2 = rawNoun2.split(", ")
+
+export function generateInterviewName() {
+    var randAdj = adj[Math.trunc(Math.random()*(adj.length))]
+    var randNoun = noun[Math.trunc(Math.random()*(noun.length))]
+    var randNoun2 = noun2[Math.trunc(Math.random()*(noun2.length))]
+    return randAdj + " " + randNoun + " " + randNoun2
+}

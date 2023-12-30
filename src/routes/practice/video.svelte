@@ -3,8 +3,12 @@
     import DetectRTC from "detectrtc/DetectRTC";
     import {user_sub, storage, app} from "$lib/global.js";;
 	import { writable } from 'svelte/store';
+    import { generateInterviewName } from '$lib/global.js';
+	import { onMount } from "svelte";
 
     export var getQuestion;
+    export var insertInStartQuestion = () => {return true}; // before showVideo turns true
+    export var insertInEndQuestion = () => {}; // after showVideo turns false
     var mediaRecorder;
     var recordedChunks;
     var showVideo = false;
@@ -14,11 +18,19 @@
     var question = writable("---");
     const synth = window.speechSynthesis;
 
+    onMount(() => {
+        document.getElementById("interviewName").value = generateInterviewName()
+    })
+
     const startVideo = async () => {
+        if (!(await insertInStartQuestion())){ // false = break the function, true = continue
+            return;
+        }
         interviewName = document.getElementById("interviewName").value;
         showVideo = true;
         question.set("Loading...");
-        
+        await getQuestion(question);
+        repeatQuestion();
         navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: "user" }})
             .then( (stream) => {
                 var video = video = document.querySelector("#streamVid");
@@ -37,6 +49,8 @@
 
                 // when stop recording
                 mediaRecorder.addEventListener('stop', async () => {
+                    insertInEndQuestion();
+                    document.getElementById("interviewName").value = generateInterviewName()
                     downloadLinkProgress = "progress"
                     question.set("---");
 
@@ -70,7 +84,6 @@
                     showVideo = false;
                     mediaRecorder.stop();
                     video.srcObject = null;
-
                     if (stream != null) {
                         var tracks = stream.getTracks();
                         for (var i = 0; i < tracks.length; i++) {
@@ -82,10 +95,12 @@
                 })
                 mediaRecorder.start();
                 
+                
             }) 
-        
     }
+
     const repeatQuestion = async () => { // say question outloud
+        console.log($question);
         synth.cancel();
         let utterance = new SpeechSynthesisUtterance($question);
         speechSynthesis.speak(utterance);
@@ -114,7 +129,7 @@
             <!-- Interview Name -->
             <span class ="d-flex w-100 text-nowrap mt-3">
                 <b>Interview Name:</b>&nbsp;&nbsp;
-                <input id ="interviewName" type = "text" class = "w-100" value = "Job Specific Practice Interview" placeholder="Name for Interview" />
+                <input id ="interviewName" type = "text" class = "w-100" placeholder="Name for Interview" />
             </span>
             <span class = "w-100 text-start text-secondary">
                 *Interview name can be edited later in the "Past Interviews" section on the home page
@@ -142,7 +157,7 @@
         <br>
 
         <!-- Start Video Button -->
-        <form on:submit = {() => {startVideo();getQuestion(question);repeatQuestion();}}  class = "flex-center w-100 mt-2" style = "height: 50px;">
+        <form on:submit = {() => {startVideo();}}  class = "flex-center w-100 mt-2" style = "height: 50px;">
             <input type = "submit" value = "Start Video" class = "btn btn-success py-2 fs-5" />
         </form>
     {:else}
@@ -155,7 +170,7 @@
         <!-- Stop Button -->
         <span class = "d-flex">
             <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-2 py-2" value= "Stop Video" />
-            <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {()=> {getQuestion(question);repeatQuestion();}} /> 
+            <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {async ()=> {await getQuestion(question);repeatQuestion();}} /> 
         </span>
         <br>
     
@@ -167,6 +182,9 @@
                 </video>
             </div>
         </span>
+
+        <i class = "mt-2 text-secondary">Recording under the interview name of "{interviewName}"</i>
+
     {/if}       
 </div>
 <style>    
