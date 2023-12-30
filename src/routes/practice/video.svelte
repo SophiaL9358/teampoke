@@ -137,11 +137,29 @@
             <!-- Cam/Mic Settings -->
             <table class = "my-3">
                 <tr class ="text-dark">
-                    <td><i class="fa-solid fa-camera me-1 fs-5"></i></td>
-                    <td class = "fs-4">{cameraReady}</td>
-                    <td class = "px-2"></td>
-                    <td><i class="fa-solid fa-microphone me-1 fs-5"></i></td>
-                    <td class = "fs-4">{microphoneReady}</td>
+                    {#if cameraReady == "Camera Ready"}
+                        <td class = "fs-4">
+                            <i class="fa-solid fa-camera me-1 fs-5"></i>
+                            {cameraReady}
+                        </td>
+                    {:else}
+                        <td class = "fs-5 text-danger">
+                            <i class="fa-solid fa-camera me-1 fs-5 text-danger"></i>
+                            {cameraReady}
+                        </td>
+                    {/if}
+                    <td class = "px-3"></td>
+                    {#if microphoneReady == "Microphone Ready"}
+                        <td class = "fs-4">
+                            <i class="fa-solid fa-microphone me-1 fs-5"></i>
+                            {microphoneReady}
+                        </td>
+                    {:else}
+                        <td class = "fs-5 text-danger">
+                            <i class="fa-solid fa-microphone me-1 fs-5 text-danger"></i>
+                            {microphoneReady}
+                        </td>
+                    {/if}
                 </tr>
             </table>
             
