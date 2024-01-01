@@ -59,7 +59,7 @@ export async function POST ({ request }) { // submit vote (i know this isnt righ
           temperature: 0.6,
           max_tokens: 1024
       });
-    }else {
+    }else if (input.startsWith("FOLLOWUP QUESTION")) {
       completion = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: generatePrompt(input),

@@ -19,7 +19,7 @@
     margin-bottom: 1px;
   }
 </style>
-<Navbar back = true />
+<Navbar/>
 <div class="w-100 flex-center mt-5 ">
   <div class="container">
     <div class="header" style="height: 100px;"> Please chose an interview type:</div>

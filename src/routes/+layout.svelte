@@ -1,12 +1,8 @@
 <script>
-	import "../app.pcss";
-    import Footer from './Footer.svelte';
     import './styles.css';
 </script>
 
-<div class="app h-100">
-	<main>
-		<slot></slot>
-	</main>
+<main class="app h-100">
+	<slot></slot>
 	
-</div>
+</main>
