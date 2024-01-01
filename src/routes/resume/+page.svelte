@@ -8,7 +8,13 @@
 
     let files;
     var storagePath = $user_sub+"/Resume/resume.pdf";
+
     onMount(() => {
+        if ($user_sub == "") {
+            alert("The resume upload page requires you to be signed in! Redirecting to login page...")
+            document.location.href = "/"
+        }
+
         getBlob(ref(storage, storagePath)).then((file)=>{
             var myiFrame = document.getElementById("myiFrame");
             myiFrame.src=URL.createObjectURL(file);
@@ -58,6 +64,7 @@
     </div>
     
 </body>
+
 <style>
 
 

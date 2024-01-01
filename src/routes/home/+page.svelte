@@ -1,8 +1,15 @@
 <script>
 	import Navbar from "../Navbar.svelte";
       import { user_sub, user_name } from "$lib/global.js";
+	import { onMount } from "svelte";
 
       console.log($user_sub);
+      onMount(() => {
+            if ($user_sub == "") {
+                  alert("This home page has options that requires you to be signed in! Redirecting to login page...")
+                  document.location.href = "/"
+            }
+      })
 </script>
 <Navbar/>
 <br>

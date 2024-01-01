@@ -1,5 +1,6 @@
 <script>
     import { logoutAndReturn, user_sub } from "$lib/global.js";
+	import { onMount } from "svelte";
     export var back = false;
     export var guest = false;
     

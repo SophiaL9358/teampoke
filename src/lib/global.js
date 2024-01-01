@@ -4,6 +4,10 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { onMount } from "svelte";
 
+import { Buffer } from 'buffer';
+
+// @ts-ignore
+globalThis.Buffer = Buffer;
 const firebaseConfig = {
     apiKey: "AIzaSyCqMXF0c9ewaFpaddxF1p2iTn6AuZbeC4g",
     authDomain: "aeee-416c3.firebaseapp.com",

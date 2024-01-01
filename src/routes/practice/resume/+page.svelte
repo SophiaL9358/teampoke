@@ -8,26 +8,33 @@
 	import Video from '../video.svelte';
 
     var resumeText = "";
-    var resumeSections = [];
+    var resumeWords = []; // not just words
+    var resumeCheck = false;
 
     onMount(() => {
+        if ($user_sub == "") {
+            alert("The resume practice page requires you to be signed in! Redirecting to login page...")
+            document.location.href = "/"
+        }
+
         getBlob(ref(storage, $user_sub+"/Resume/resume.pdf")).then(async (file)=> {
-            let buffer = await fetch(URL.createObjectURL(file)).then(r => r.arrayBuffer());
+            let buffer = await file.arrayBuffer()
             getPdfText(buffer).then((text) =>{
                 resumeText = text;
-                while (resumeText.length > 1){
-                    var end = 100;
-                    if (resumeText.length < end) {
-                        end= resumeText.length;
-                    }
-                    console.log(end);
-                    resumeSections.push(resumeText.substring(0, end));
-                    resumeText = resumeText.substring(end);
-                }
+                resumeWords = resumeText.split(" ")
+                // while (resumeText.length > 1){
+                //     var end = 100;
+                //     if (resumeText.length < end) {
+                //         end= resumeText.length;
+                //     }
+                //     console.log(end);
+                //     resumeSections.push(resumeText.substring(0, end));
+                //     resumeText = resumeText.substring(end);
+                // }
+                console.log(resumeWords)
             })
-            console.log(resumeSections)
+            
         })
-        console.log(resumeSections, 'test')
     })
 
     async function getPdfText(data) {
@@ -43,12 +50,17 @@
 
 
     const getResumeQuestion = async (questionStore) => {      
-        var index = Math.floor(Math.random() * resumeSections.length)%resumeSections.length;
+        var wordAmt = 30
+        var index = Math.floor(Math.random() * resumeWords.length)%(resumeWords.length-wordAmt);
         console.log(index);  
+        var text = ""
+        for (var i = index; i < index + wordAmt; i ++) {
+            text += resumeWords[i] + " "
+        }
 
-        var req = "RESUME QUESTION,"+resumeSections[index];
+        var req = "RESUME QUESTION,"+text;
         console.log(req);
-        const response = await fetch("../api", {
+        const response = await fetch("../../api", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,8 +78,13 @@
 </script>
 <Navbar/>
 <Video getQuestion={getResumeQuestion}>
-    <input type = "checkbox" id = "showResume"/> <label for = "showResume" class = "text-dark">Show Resume Text</label>
-    {resumeText}
+    <span class = "mt-3">
+        <input type = "checkbox" id = "showResume" bind:checked = {resumeCheck}/> <label for = "showResume" class = "text-dark">Show Resume Text</label>
+    </span>
+    {#if resumeCheck}
+        {resumeText}
+    {/if}
+    
 </Video>
 
 <style>

@@ -4,12 +4,21 @@
 	import { deleteObject, getBlob, getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 	import { writable } from "svelte/store";
 	import jquery from "jquery";
+	import { onMount } from "svelte";
     
     var downloadLink;
     var none = false;
     var interviews = []
     var show;
     const listRef = ref(storage, $user_sub+"/Videos/")
+
+    onMount(() => {
+        if ($user_sub == "") {
+            alert("The past interview page requires you to be signed in! Redirecting to login page...")
+            document.location.href = "/"
+        }
+        getInterviews();
+    })
 
     function startDownload(fileName){
         getBlob(ref(storage, $user_sub+'/Videos/'+fileName)).then((blob)=> {
@@ -66,11 +75,6 @@
     }
     
     
-    getInterviews();
-
-
-    
-
 </script>
 <Navbar/>
 <br>

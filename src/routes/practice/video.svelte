@@ -1,45 +1,84 @@
 <script>
-    import { ref, getDownloadURL, uploadBytes, uploadString } from "firebase/storage";
+    import { ref, getDownloadURL, uploadBytes, uploadString, getBlob } from "firebase/storage";
     import DetectRTC from "detectrtc/DetectRTC";
     import {user_sub, storage, app} from "$lib/global.js";;
 	import { writable } from 'svelte/store';
     import { generateInterviewName } from '$lib/global.js';
 	import { onMount } from "svelte";
+    import * as ebml from 'ts-ebml';
+    import getBlobDuration from 'get-blob-duration'
 
     export var getQuestion;
     export var insertInStartQuestion = () => {return true}; // before showVideo turns true
     export var insertInEndQuestion = () => {}; // after showVideo turns false
     var mediaRecorder;
     var recordedChunks;
-    var showVideo = false;
     var interviewName;
     var downloadLinkProgress = "none" // none = no link, progress = still being created, done = can click on it!
+    var objUrl;
+
+    var secondsPassed = writable(0)
+
+    var showVideo = false;
+    var TTSChecked = true; // controls TTS checkbox
+    var showVideoAfterwards = true; // controls "show video of *interview name*"
+    var loaded = false;
 
     var question = writable("---");
     const synth = window.speechSynthesis;
 
     onMount(() => {
+        window.addEventListener("onbeforeunload", () => {
+            console.log("sdkfjsdlfj")
+        })
+        // var video = document.querySelector("#streamVid");
+        // video.srcObject = null // start video
+
         document.getElementById("interviewName").value = generateInterviewName()
+        loaded = true
     })
+
+
+    const returnTime = (seconds) => {
+        let minutes =  Math.floor(seconds/60)
+        seconds = seconds - minutes*60
+        if (minutes < 10) {minutes = "0" + minutes}
+        if (seconds < 10) { seconds = "0" + seconds}
+        return minutes+":"+seconds
+    }
 
     const startVideo = async () => {
         if (!(await insertInStartQuestion())){ // false = break the function, true = continue
             return;
         }
+        if (document.getElementById("interviewName").value.includes("|")) {
+            alert("Please do not include \"|\" in the interview name!")
+            return;
+        }
+        
         interviewName = document.getElementById("interviewName").value;
         showVideo = true;
         question.set("Loading...");
-        await getQuestion(question);
-        repeatQuestion();
+
+        
         navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: "user" }})
             .then( (stream) => {
-                var video = video = document.querySelector("#streamVid");
-                video.srcObject = stream;
-                
+                // timer vars
+                var timerID;
+                secondsPassed.set(0) // 830 = 13:50
+
+                // video vars
+                var video = document.querySelector("#streamVid");
+                video.srcObject = stream // start video
+
                 // audio
                 recordedChunks = [];
-                mediaRecorder = new MediaRecorder(stream);
-                
+                const options = {
+                    mimeType: 'video/webm' // \;codecs=vp9
+                };
+
+                mediaRecorder = new MediaRecorder(stream, options);
+
                 // record data
                 mediaRecorder.addEventListener('dataavailable', (e) => {
                     if (e.data.size >0) {
@@ -54,31 +93,59 @@
                     downloadLinkProgress = "progress"
                     question.set("---");
 
-                    var blobVid = new Blob(recordedChunks);
-
+                    const blobVid = new Blob(recordedChunks, { type: "video/webm"  }); // recordedChunks[0].type
                     // set interview name
                     var dateVar = new Date();
                     var fullInterviewName= interviewName+"|"+(dateVar.getMonth()+1)+"-"+dateVar.getDate()+"-"+dateVar.getFullYear();
                     fullInterviewName += "|"+dateVar.getHours()+":"+dateVar.getMinutes()
 
+                    // change so its seekable
+                    // const decoder = new ebml.Decoder();
+                    // const reader = new ebml.Reader();
+                    // const webMBuf = await blobVid.arrayBuffer();
+                    // const elms = decoder.decode(webMBuf);
+
+                    // elms.forEach((elm)=>{
+                    //     if (elm.type !== 'unknown') {
+                    //         reader.read(elm)
+                    //     }
+                    //  });
+                    // reader.stop();
+                    // const duration = await getBlobDuration(blobVid)
+                    // console.log(reader.duration)
+                    // const refinedMetadataBuf = ebml.tools.makeMetadataSeekable(reader.metadatas, reader.duration, reader.cues);
+                    // const body = webMBuf.slice(reader.metadataSize);
+                    // const refinedBlob = new Blob([refinedMetadataBuf, body], {type: "video/webm"});
+                    var refinedBlob = await injectMetadata(blobVid); // TODO: figure this out later..
+                    objUrl = URL.createObjectURL(refinedBlob);
+                    videoAfter.src = objUrl
+                    
+                    console.log(refinedBlob)
                     // upload to firebsae
                     if ($user_sub != ""){ // doesn't work if user is not signed in                    
-                        var storagePath = $user_sub + "/Videos/"+fullInterviewName+".mp4"
+                        var storagePath = $user_sub + "/Videos/"+fullInterviewName+".webm"
                         var vidRef = ref(storage, storagePath);
-                        await uploadBytes(vidRef, blobVid).then((e) => {});
+                        await uploadBytes(vidRef, refinedBlob).then((e) => {});
                     }
 
-                    // a tag link
+                    // set download link
                     var downloadLink = document.getElementById("download")
-                    downloadLink.href = URL.createObjectURL(blobVid);
-                    downloadLink.download = interviewName+".mp4";
+                    
+                    downloadLink.href = objUrl;
+                    downloadLink.download = interviewName+".webm";
                     downloadLink.classList.remove('hide')
                     downloadLinkProgress = "done"
 
+                    
                 })
 
                 // stop recording
                 document.getElementById("stopBtn").addEventListener('click', () => {
+                    // stop timer
+                    clearInterval(timerID)
+                    secondsPassed.set(0)
+                    
+                    // stop video
                     var video = document.querySelector("#streamVid");
                     var stream = video.srcObject;
                     showVideo = false;
@@ -93,14 +160,67 @@
                     }
                     
                 })
+
+                // start recording
                 mediaRecorder.start();
                 
+                // start timer
+                timerID = setInterval(() => {                    
+                    if ($secondsPassed == 840) { // 20 minutes
+                        alert("You have reached the 14 minute mark! To prevent the video from being too large, the interview will automatically end at 15 minutes.")
+                    } else if ($secondsPassed == 900) {
+                        document.getElementById("stopBtn").click();
+                        alert("You have reached the 15 minute mark! To prevent the video from being too large, the interview will now be stopped.")
+                    }
+                    
+                    secondsPassed.set($secondsPassed+1)
+                    
+                }, 1000)
                 
-            }) 
+            }).catch(() => {
+                console.log("Something went wrong!")
+            })
+        await getQuestion(question);
+        if (TTSChecked){
+            repeatQuestion();
+        }
+        
     }
 
+    const readAsArrayBuffer = function(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(blob);
+            reader.onloadend = () => { resolve(reader.result); };
+            reader.onerror = (ev) => { reject(ev.error); };
+        });
+    }
+
+    const injectMetadata = async function(blob) {
+        const decoder = new ebml.Decoder();
+        const reader = new ebml.Reader();
+        reader.logging = false;
+        reader.drop_default_duration = false;
+
+        var buffer = await blob.arrayBuffer()
+        const elms = decoder.decode(buffer);
+        elms.forEach((elm) => { reader.read(elm);});
+        reader.stop();
+        var iwannadie = await getBlobDuration(blob) * 1000000000 / reader.timecodeScale
+        console.log(await getBlobDuration(blob) * 1000000000 / reader.timecodeScale)
+        
+        var refinedMetadataBuf = ebml.tools.makeMetadataSeekable(reader.metadatas, iwannadie, reader.cues);
+        var body = buffer.slice(reader.metadataSize);
+
+        const result = new Blob([refinedMetadataBuf, body],
+            {type: "video/webm"}); // blob.type
+        console.log(result, "res")
+        return result;
+        
+    }    
+
+
     const repeatQuestion = async () => { // say question outloud
-        console.log($question);
         synth.cancel();
         let utterance = new SpeechSynthesisUtterance($question);
         speechSynthesis.speak(utterance);
@@ -162,14 +282,34 @@
                     {/if}
                 </tr>
             </table>
+            <span><input type = "checkbox" id = "TTSCheck" bind:checked = {TTSChecked}/> <label for = "TTSCheck">Question is read out loud (Text to Speech)</label></span>
+            {#if !TTSChecked}
+                <span class = "text-secondary">
+                    *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
+                </span>
+            {/if} 
+
+            {#if interviewName != undefined}
+                <span><input type = "checkbox" bind:checked = {showVideoAfterwards} id = "VideoCheck"/> <label for = "VideoCheck">Show video of "{interviewName}"</label></span>
+                {#if showVideoAfterwards}
+                    <video src = {objUrl} alt = "Video of {interviewName}" controls = true id = "videoAfter">
+                        <track kind = "captions">
+                    </video>
+                {/if}
+            {/if}
             
-            <a id = "download" class = "fs-5 hide" download>Download Video Recording "{interviewName}.mp4"</a>
+
+            <a id = "download" class = "fs-5 hide mt-3" download>Download Video Recording "{interviewName}.mp4"</a>
             {#if downloadLinkProgress == "progress"}
-                <span class = "text-primary">
+                <span class = "text-primary mt-3">
                     <div class = "spinner-border spinner-border-sm text-primary me-1"></div> Download link is in progress...
                     <br>
-                    <i class = "text-danger">Please do not exit the page until the download link is finished being created.</i>
+                    <i class = "text-danger">Please do not exit the page/start a new interview until the download link is finished being created.</i>
                 </span>
+            {:else if downloadLinkProgress == "error"}
+            <span>
+                <i class = "text-danger">An error occurred! Please try recording again. If this error continues, please contact the developers at poke.co2023@gmail.com.</i>
+            </span>
             {/if}
         </div>
         <br>
@@ -185,15 +325,16 @@
             <span class = "fs-4 text-dark">{$question}</span>
         </div>
 
-        <!-- Stop Button -->
-        <span class = "d-flex">
+        <!-- Stop/Next Question Button -->
+        <span class = "d-flex flex-center fs-5">
             <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-2 py-2" value= "Stop Video" />
-            <input type = "button" value = "New Question" class = "btn btn-primary mt-2 mx-1" on:click = {async ()=> {await getQuestion(question);repeatQuestion();}} /> 
+            <input type = "button" value = "New Question" class = "btn btn-primary mt-2 ms-1 me-3" on:click = {async ()=> {await getQuestion(question);if (TTSChecked){repeatQuestion();}}} /> 
+            {returnTime($secondsPassed)}
         </span>
-        <br>
+        
     
         <!-- Video -->
-        <span class = "row">
+        <span class = "row mt-2">
             <div class = "col-md">
                 <video id = "streamVid" autoplay = "true" muted>
                     <track kind = "captions">
@@ -201,19 +342,27 @@
             </div>
         </span>
 
-        <i class = "mt-2 text-secondary">Recording under the interview name of "{interviewName}"</i>
-
+        <i class = "my-2 text-secondary">Recording under the interview name of "{interviewName}"</i>
+        
+        <span><input type = "checkbox" id = "TTSCheck" bind:checked = {TTSChecked}/> <label for = "TTSCheck">Question is read out loud (Text to Speech)    </label></span>
+        {#if !TTSChecked}
+            <span class = "text-secondary">
+                *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
+            </span>
+        {/if} 
     {/if}       
 </div>
+
 <style>    
     video {
         width: 500px;
         aspect-ratio: 16/9;
         background-color: rgb(231, 250, 235);
-        border: 3px black solid;
-
-        transform: rotateY(180deg);
-        -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-        -moz-transform:rotateY(180deg); /* Firefox */
+        border: 1.5px black solid;
     }
+    input[type="checkbox"] {
+        scale: 1.3;
+        margin-right: 0.3em;
+    }
+    
 </style>
