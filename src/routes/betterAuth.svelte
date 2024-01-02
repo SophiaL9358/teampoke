@@ -30,7 +30,7 @@
             window.google.accounts.id.initialize({
                 client_id: '1083819190018-jmgb2p9eucom10vu675d19nkbcc1e35o.apps.googleusercontent.com',
                 callback: window.handleSignInWithGoogle,
-                context: 'signin',
+                context: 'signin_with',
                 ux_mode: 'popup',
                 nonce: '',
                 auto_select: true,
@@ -38,10 +38,11 @@
             });
             window.google.accounts.id.renderButton(document.getElementById('g_id_onload'), {
                 type: 'standard',
-                theme: 'outline',
+                theme: 'filled_blue',
                 text: 'signin_with',
                 size: 'large',
-                logo_alignment: 'left'
+                logo_alignment: 'left',
+                shape: 'pill'
             });
         };
         document.body.appendChild(script);

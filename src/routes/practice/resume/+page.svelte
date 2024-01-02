@@ -10,6 +10,7 @@
     var resumeText = "";
     var resumeWords = []; // not just words
     var resumeCheck = false;
+    var resumeExists = true;
 
     onMount(() => {
         if ($user_sub == "") {
@@ -34,6 +35,8 @@
                 console.log(resumeWords)
             })
             
+        }).catch((e) => {
+            resumeExists = false;
         })
     })
 
@@ -75,14 +78,28 @@
         console.log(data.result)
         questionStore.set(data.result)
     }
+    
+    const insertInStartQuestion = () => {
+        if (!resumeExists) {
+            alert ("Please upload your resume first! Click the \"Upload Resume\" button in the \"Edit/Check your Profile\" section on the home page.")
+            return false
+        }
+        return true
+    }
 </script>
-<Navbar/>
-<Video getQuestion={getResumeQuestion}>
-    <span class = "mt-3">
-        <input type = "checkbox" id = "showResume" bind:checked = {resumeCheck}/> <label for = "showResume" class = "text-dark">Show Resume Text</label>
-    </span>
-    {#if resumeCheck}
-        {resumeText}
+<Video getQuestion={getResumeQuestion} insertInStartQuestion= {insertInStartQuestion}>
+    {#if !resumeExists}
+        <div class = "text-danger mt-3">Your resume is not uploaded, Upload your resume at: </div>
+        <a href = "/resume"><button class = "poke-btn text-dark w-100 bg-resume"> 
+            Upload Resume
+        </button></a> 
+    {:else}
+        <span class = "mt-3">
+            <input type = "checkbox" id = "showResume" bind:checked = {resumeCheck}/> <label for = "showResume" class = "text-dark">Show Resume Text</label>
+        </span>
+        {#if resumeCheck}
+            {resumeText}
+        {/if}
     {/if}
     
 </Video>

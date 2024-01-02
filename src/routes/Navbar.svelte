@@ -3,35 +3,50 @@
 	import { onMount } from "svelte";
     export var back = false;
     export var guest = false;
-    
+    export var doBeforeExiting = () => {};
 
     if ($user_sub == "") {
         guest = true;
         
-    } else if (window.location.pathname != '/home'){
-        back = true;
+    } 
+    onMount(()=> {
+        if (window.location.pathname != '/home' && window.location.pathname != '/home/'){
+            back = true;
+        }
+    })
+
+    const goBack = () => {
+        doBeforeExiting();
+        document.getElementById("goToHome").click()
+    }
+    const goLogin = () => {
+        doBeforeExiting();
+        document.getElementById("goToLogin").click()
     }
 </script>
 
 <section class = "w-100 flex-center px-5 fs-5" style = "height: 70px; margin-bottom: 10px; background-color: #2B7F80;">
     {#if guest}
         <div class = "text-light me-auto">
-            <a href = "/"><i class="fa-solid fa-arrow-left-long "></i>&nbsp;&nbsp;Back to Login</a>
+            <button class = "btn fs-5 text-light" on:click = {goLogin}><i class="fa-solid fa-arrow-left-long " ></i>&nbsp;&nbsp;Back to Login</button>
         </div>
     {:else if back}
         <div class = "text-light me-auto">
-            <a href = "/home"><i class="fa-solid fa-arrow-left-long"></i>&nbsp;&nbsp;Back To Home</a>
+            <button class = "btn fs-5 text-light" on:click = {goBack}><i class="fa-solid fa-arrow-left-long"></i>&nbsp;&nbsp;Back To Home</button>
         </div>
     {/if}
     
     {#if !guest}
         <div class = "ms-auto h-100">
-            <button class = "btn px-3 fs-5 h-100" id = "logoutBtn" on:click = {logoutAndReturn}>
+            <button class = "btn px-3 fs-5 h-100" id = "logoutBtn" on:click = {() => {doBeforeExiting(); logoutAndReturn();}}>
                 Logout
             </button>
         </div>
     {/if}
 </section>
+
+<a href = "/home"><button class = "hide" id = "goToHome">change to home</button></a>
+<a href = "/"><button class = "hide" id = "goToLogin">change to home</button></a>
 
 <style>
     #logoutBtn {
@@ -49,5 +64,8 @@
     a {
         color: white;
         text-decoration: none;
+    }
+    a:hover {
+        cursor: pointer;
     }
 </style>

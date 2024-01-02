@@ -1,15 +1,16 @@
 <script>
     import { ref, getDownloadURL, uploadBytes, uploadString, getBlob } from "firebase/storage";
     import DetectRTC from "detectrtc/DetectRTC";
-    import {user_sub, storage, app} from "$lib/global.js";;
+    import {user_sub, storage, app, formatTime} from "$lib/global.js";;
 	import { writable } from 'svelte/store';
     import { generateInterviewName } from '$lib/global.js';
 	import { onMount } from "svelte";
     import * as ebml from 'ts-ebml';
     import getBlobDuration from 'get-blob-duration'
+	import Navbar from "../Navbar.svelte";
 
     export var getQuestion;
-    export var insertInStartQuestion = () => {return true}; // before showVideo turns true
+    export var insertInStartQuestion = () => {return true}; // before showVideo turns true, true: continue, false: leave function
     export var insertInEndQuestion = () => {}; // after showVideo turns false
     var mediaRecorder;
     var recordedChunks;
@@ -28,24 +29,12 @@
     const synth = window.speechSynthesis;
 
     onMount(() => {
-        window.addEventListener("onbeforeunload", () => {
-            console.log("sdkfjsdlfj")
-        })
         // var video = document.querySelector("#streamVid");
         // video.srcObject = null // start video
 
         document.getElementById("interviewName").value = generateInterviewName()
         loaded = true
     })
-
-
-    const returnTime = (seconds) => {
-        let minutes =  Math.floor(seconds/60)
-        seconds = seconds - minutes*60
-        if (minutes < 10) {minutes = "0" + minutes}
-        if (seconds < 10) { seconds = "0" + seconds}
-        return minutes+":"+seconds
-    }
 
     const startVideo = async () => {
         if (!(await insertInStartQuestion())){ // false = break the function, true = continue
@@ -96,8 +85,9 @@
                     const blobVid = new Blob(recordedChunks, { type: "video/webm"  }); // recordedChunks[0].type
                     // set interview name
                     var dateVar = new Date();
-                    var fullInterviewName= interviewName+"|"+(dateVar.getMonth()+1)+"-"+dateVar.getDate()+"-"+dateVar.getFullYear();
-                    fullInterviewName += "|"+dateVar.getHours()+":"+dateVar.getMinutes()
+                    var time = dateVar.getTime()
+                    // (dateVar.getMonth()+1)+"/"+dateVar.getDate()+"/"+dateVar.getFullYear();
+                    var fullInterviewName= interviewName+"|"+time;
 
                     // change so its seekable
                     // const decoder = new ebml.Decoder();
@@ -118,9 +108,7 @@
                     // const refinedBlob = new Blob([refinedMetadataBuf, body], {type: "video/webm"});
                     var refinedBlob = await injectMetadata(blobVid); // TODO: figure this out later..
                     objUrl = URL.createObjectURL(refinedBlob);
-                    videoAfter.src = objUrl
                     
-                    console.log(refinedBlob)
                     // upload to firebsae
                     if ($user_sub != ""){ // doesn't work if user is not signed in                    
                         var storagePath = $user_sub + "/Videos/"+fullInterviewName+".webm"
@@ -207,14 +195,14 @@
         elms.forEach((elm) => { reader.read(elm);});
         reader.stop();
         var iwannadie = await getBlobDuration(blob) * 1000000000 / reader.timecodeScale
-        console.log(await getBlobDuration(blob) * 1000000000 / reader.timecodeScale)
+        // console.log(await getBlobDuration(blob) * 1000000000 / reader.timecodeScale)
         
         var refinedMetadataBuf = ebml.tools.makeMetadataSeekable(reader.metadatas, iwannadie, reader.cues);
         var body = buffer.slice(reader.metadataSize);
 
         const result = new Blob([refinedMetadataBuf, body],
             {type: "video/webm"}); // blob.type
-        console.log(result, "res")
+        // console.log(result, "res")
         return result;
         
     }    
@@ -240,9 +228,10 @@
     })
 
 </script>
+<Navbar doBeforeExiting = {() => {if (showVideo) {document.getElementById("stopBtn").click();}}}/>
 <div class = "w-100 text-dark mb-5 pb-5 p-2 flex-center flex-column">
     {#if !showVideo}
-        <div class = "border border-2 p-3 mt-5 text-dark text-center d-flex flex-column align-items-center" style = "width: 600px;">
+        <div class = "border border-2 p-3 mt-5 text-dark text-center d-flex flex-column align-items-center" style = "width: 700px;">
             <i>Setup for the interview practice</i>
             
             <slot></slot>
@@ -299,7 +288,7 @@
             {/if}
             
 
-            <a id = "download" class = "fs-5 hide mt-3" download>Download Video Recording "{interviewName}.mp4"</a>
+            <a id = "download" class = "fs-5 hide mt-3" download>Download Video Recording "{interviewName}.webm"</a>
             {#if downloadLinkProgress == "progress"}
                 <span class = "text-primary mt-3">
                     <div class = "spinner-border spinner-border-sm text-primary me-1"></div> Download link is in progress...
@@ -326,15 +315,15 @@
         </div>
 
         <!-- Stop/Next Question Button -->
-        <span class = "d-flex flex-center fs-5">
-            <input id = "stopBtn"  type  = "button" class = "btn btn-danger mt-2 py-2" value= "Stop Video" />
-            <input type = "button" value = "New Question" class = "btn btn-primary mt-2 ms-1 me-3" on:click = {async ()=> {await getQuestion(question);if (TTSChecked){repeatQuestion();}}} /> 
-            {returnTime($secondsPassed)}
+        <span class = "d-flex flex-center fs-5 mt-3">
+            <input style = "height: 50px;" id = "stopBtn"  type  = "button" class = "btn btn-danger py-2" value= "Stop Video" />
+            <input style = "height: 50px;" type = "button" value = "New Question" class = "btn btn-primary ms-2 me-3" on:click = {async ()=> {await getQuestion(question);if (TTSChecked){repeatQuestion();}}} /> 
+            <span style= "height: 50px" class = "border border-1 rounded flex-center px-3 text-end">{formatTime($secondsPassed)}</span>
         </span>
         
     
         <!-- Video -->
-        <span class = "row mt-2">
+        <span class = "row mt-3">
             <div class = "col-md">
                 <video id = "streamVid" autoplay = "true" muted>
                     <track kind = "captions">
@@ -354,6 +343,11 @@
 </div>
 
 <style>    
+    #streamVid {
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        width: 600px;
+    }
     video {
         width: 500px;
         aspect-ratio: 16/9;

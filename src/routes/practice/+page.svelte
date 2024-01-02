@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import Navbar from '../Navbar.svelte';
 	import Video from './video.svelte';
 
@@ -30,5 +31,4 @@
     }
 
 </script>
-<Navbar/>
 <Video getQuestion={getRandomQuestion}></Video>

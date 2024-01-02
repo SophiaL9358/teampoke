@@ -60,6 +60,22 @@ h1 {
 	background-color: #F86F03;
 }
 
+.bg-resume {
+	background-color: #F3C677;
+}
+
+.bg-resume-questions {
+	background-color: #80ED99;
+}
+
+.bg-random-questions {
+	background-color: #034078;
+}
+
+.bg-job-questions {
+	background-color: #2B7F80;
+}
+
 /*
 @import '@fontsource/fira-mono';
 
