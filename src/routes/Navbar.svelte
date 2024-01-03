@@ -26,7 +26,7 @@
 </script>
 
 <section class = "w-100 flex-center px-5 fs-5" style = "height: 70px; margin-bottom: 10px; background-color: #2B7F80;">
-    {#if guest}
+    {#if !back && guest}
         <div class = "text-light me-auto">
             <button class = "btn fs-5 text-light" on:click = {goLogin}><i class="fa-solid fa-arrow-left-long " ></i>&nbsp;&nbsp;Back to Login</button>
         </div>

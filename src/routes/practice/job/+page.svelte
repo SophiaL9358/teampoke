@@ -43,11 +43,14 @@
             alert("Please put a job name!")
             return false;
         }
-        if ($user_sub != "" && savedJob != jobName.value) {
+        if (savedJob != jobName.value) {
             savedJob = jobName.value
-            await updateDoc(doc(db, "Users/"+$user_sub), {
+            if ($user_sub != "" ) {
+                await updateDoc(doc(db, "Users/"+$user_sub), {
                 savedJob: savedJob
             });
+            }
+ 
         }
         return true;
     }

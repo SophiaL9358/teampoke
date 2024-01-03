@@ -10,7 +10,7 @@
     <span class = "d-flex"><h1>Mock Interview Practice</h1><img src = "/pokeco_ex_logo.png" alt = "pokeco logo" style = "height: 60px;" class = "ms-2"/></span>
     <span class = "mb-5">Questions? Email <a href="mailto:poke.co2023@gmail.com">poke.co2023@gmail.com</a></span>
     <BetterAuth/>
-    <a href = "/practice">
+    <a href = "/home">
         <button class = "poke-btn bg-job-questions text-light">
             Contine As Guest
         </button>

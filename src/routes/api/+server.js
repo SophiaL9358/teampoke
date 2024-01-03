@@ -95,15 +95,19 @@ function generateFirstQuestion() {
 }
 
 function generatePositionQuestion(position) {
-    return `Generate a simple and clear interview question based on the position the applicant is applying to.
+    return `Give a clear interview question based on the job delimited by triple quotations.
     
-    Job: Marine Biology
-    Question: In your opinion, what's one of the most effective strategies for preserving endangered marine species?
-    Job: Civil Engineer
-    Question: What made you decide to become a civil engineer?
-    Job: ${position}
-    Question: `;
+    """${position}"""`;
   }
+
+  // return `Give a clear interview question based on the job delimited by triple backticks.
+    
+  //   Job: Marine Biology
+  //   Question: In your opinion, what's one of the most effective strategies for preserving endangered marine species?
+  //   Job: Civil Engineer
+  //   Question: What made you decide to become a civil engineer?
+  //   Job: ${position}
+  //   Question: `;
   function generateResumeQuestion(resumeSnip) {
     return `Generate a simple and clear interview question based an applicant's resume.
     
