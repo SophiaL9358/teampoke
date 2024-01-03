@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "mybuildscript && npm run move-static",
+		"build": "vite build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
