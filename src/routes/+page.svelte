@@ -7,11 +7,11 @@
     <img src = "https://cdn.firespring.com/images/5adbf42d-0a16-4ec5-ae1b-0ec931f8247a.png" id = "logo" alt = "Arc of Frederick County Logo"/>
 </a>
 <section class = "flex-center flex-column text-center" style = "height: 100vh;">
-    <h1>Mock Interview Practice</h1>
+    <span class = "d-flex"><h1>Mock Interview Practice</h1><img src = "/pokeco_ex_logo.png" alt = "pokeco logo" style = "height: 60px;" class = "ms-2"/></span>
     <span class = "mb-5">Questions? Email <a href="mailto:poke.co2023@gmail.com">poke.co2023@gmail.com</a></span>
     <BetterAuth/>
     <a href = "/practice">
-        <button class = "poke-btn bg-contrast-light-orange">
+        <button class = "poke-btn bg-job-questions text-light">
             Contine As Guest
         </button>
     </a>

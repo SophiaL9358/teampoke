@@ -1,103 +1,69 @@
+<video id="videoElement" width="640" height="480" autoplay controls></video>
+  <button id="startRecording">Start Recording</button>
+  <button id="stopRecording">Stop Recording</button>
+  <a id="download">Download Video</a>
 
-<script>
+  <script>
 	import { onMount } from "svelte";
 
-      var startButton ;
-      var outputDiv 
-      var recognition
-      var text = "";
+    var videoElement
+    var startRecordingButton
+    var stopRecordingButton
+    var downloadButton
+    var mediaRecorder
     onMount(() => {
-         startButton = document.getElementById('startButton');
-        outputDiv = document.getElementById('output');
-        recognition = new webkitSpeechRecognition() || new SpeechRecognition();
-      
-        recognition.interimResults = true;
-        recognition.continuous = true;
-        recognition.maxAlternatives = 3;
+       videoElement = document.getElementById('videoElement');
+      startRecordingButton = document.getElementById('startRecording');
+      stopRecordingButton = document.getElementById('stopRecording');
+      downloadButton = document.getElementById('download')
 
-        startButton.addEventListener('click', () => {
-            recognition.start();
-            startButton.textContent = 'Recording...';
+      
+
+        startRecordingButton.addEventListener('click', () => {
+          // Get user media (video in this case)
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          videoElement.srcObject = stream;
+          mediaRecorder = new MediaRecorder(stream);
+
+          // Event handler for data available
+          mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) {
+              chunks.push(event.data);
+            }
+          };
+
+          // Event handler for when recording is stopped
+          mediaRecorder.onstop = () => {
+            console.log("here")
+            const blob = new Blob(chunks, { type: 'video/mp4' });
+            console.log(blob.type)
+            chunks = [];
+
+            // Create a download link for the recorded video
+            const url = URL.createObjectURL(blob);
+            console.log(url)
+            downloadButton.href = url;
+            downloadButton.download = 'recorded-video.mp4';
+
+            // Set the recorded video as the source for playback
+            videoElement.src = url;
+          };
+           // Start recording
+           
+           stopRecordingButton.addEventListener('click', () => {
+              mediaRecorder.stop();
+            });
+            mediaRecorder.start();
+          })
+          .catch(error => console.error('Error accessing camera:', error));
+          
         });
 
-        recognition.onresult = event => {
-            const result2 = event.results[event.results.length - 1][0].transcript;
-            const result = event.results;
-            text = ""
-            for (var i = 0; i < event.results.length; i ++) {
-                text+=event.results[i][0].transcript+" "
-            }
-            console.log(text);
-        };
-
-        recognition.onend = () => {
-            startButton.disabled = false;
-            startButton.textContent = 'Start Recording';
-        };
-
-        recognition.onerror = event => {
-            console.error('Speech recognition error:', event.error);
-        };
-
-        recognition.onnomatch = () => {
-            console.log('No speech was recognized.');
-        };
+        // Stop recording
+        
     })
-</script>
+    let chunks = [];
 
-<div class="container">
-    <h1 class="title">Speech to Text</h1>
-    <button id="startButton" class="recordButton">Start Recording</button>
-    <div id="output" class="outputText">{text}</div>
-</div>
-
-<style>
-    body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  margin: 0;
-}
-
-.container {
-  text-align: center;
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.recordButton {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.recordButton:hover {
-  background-color: #0056b3;
-}
-
-.outputText {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  min-height: 100px;
-  font-size: 18px;
-}
-
-</style>
+    
+  </script>

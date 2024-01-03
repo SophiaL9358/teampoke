@@ -8,26 +8,36 @@
 	import Video from '../video.svelte';
 
     var resumeText = "";
-    var resumeSections = [];
+    var resumeWords = []; // not just words
+    var resumeCheck = false;
+    var resumeExists = true;
 
     onMount(() => {
+        if ($user_sub == "") {
+            alert("The resume practice page requires you to be signed in! Redirecting to login page...")
+            document.location.href = "/"
+        }
+
         getBlob(ref(storage, $user_sub+"/Resume/resume.pdf")).then(async (file)=> {
-            let buffer = await fetch(URL.createObjectURL(file)).then(r => r.arrayBuffer());
+            let buffer = await file.arrayBuffer()
             getPdfText(buffer).then((text) =>{
                 resumeText = text;
-                while (resumeText.length > 1){
-                    var end = 100;
-                    if (resumeText.length < end) {
-                        end= resumeText.length;
-                    }
-                    console.log(end);
-                    resumeSections.push(resumeText.substring(0, end));
-                    resumeText = resumeText.substring(end);
-                }
+                resumeWords = resumeText.split(" ")
+                // while (resumeText.length > 1){
+                //     var end = 100;
+                //     if (resumeText.length < end) {
+                //         end= resumeText.length;
+                //     }
+                //     console.log(end);
+                //     resumeSections.push(resumeText.substring(0, end));
+                //     resumeText = resumeText.substring(end);
+                // }
+                console.log(resumeWords)
             })
-            console.log(resumeSections)
+            
+        }).catch((e) => {
+            resumeExists = false;
         })
-        console.log(resumeSections, 'test')
     })
 
     async function getPdfText(data) {
@@ -43,12 +53,17 @@
 
 
     const getResumeQuestion = async (questionStore) => {      
-        var index = Math.floor(Math.random() * resumeSections.length)%resumeSections.length;
+        var wordAmt = 30
+        var index = Math.floor(Math.random() * resumeWords.length)%(resumeWords.length-wordAmt);
         console.log(index);  
+        var text = ""
+        for (var i = index; i < index + wordAmt; i ++) {
+            text += resumeWords[i] + " "
+        }
 
-        var req = "RESUME QUESTION,"+resumeSections[index];
+        var req = "RESUME QUESTION,"+text;
         console.log(req);
-        const response = await fetch("../api", {
+        const response = await fetch("../../api", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,11 +78,30 @@
         console.log(data.result)
         questionStore.set(data.result)
     }
+    
+    const insertInStartQuestion = () => {
+        if (!resumeExists) {
+            alert ("Please upload your resume first! Click the \"Upload Resume\" button in the \"Edit/Check your Profile\" section on the home page.")
+            return false
+        }
+        return true
+    }
 </script>
-<Navbar/>
-<Video getQuestion={getResumeQuestion}>
-    <input type = "checkbox" id = "showResume"/> <label for = "showResume" class = "text-dark">Show Resume Text</label>
-    {resumeText}
+<Video getQuestion={getResumeQuestion} insertInStartQuestion= {insertInStartQuestion}>
+    {#if !resumeExists}
+        <div class = "text-danger mt-3">Your resume is not uploaded, Upload your resume at: </div>
+        <a href = "/resume"><button class = "poke-btn text-dark w-100 bg-resume"> 
+            Upload Resume
+        </button></a> 
+    {:else}
+        <span class = "mt-3">
+            <input type = "checkbox" id = "showResume" bind:checked = {resumeCheck}/> <label for = "showResume" class = "text-dark">Show Resume Text</label>
+        </span>
+        {#if resumeCheck}
+            {resumeText}
+        {/if}
+    {/if}
+    
 </Video>
 
 <style>

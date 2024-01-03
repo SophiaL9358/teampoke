@@ -11,19 +11,18 @@
         // get saved job
         if ($user_sub != ""){
             const docResponse = await getDoc(doc(db, "Users/"+$user_sub ));
-            if (docResponse.exists() && docResponse.savedJob != ""){
+            if (docResponse.exists() && docResponse.savedJob != "" && docResponse.savedJob != undefined){
                 savedJob = docResponse.data().savedJob;
                 document.getElementById("jobName").value=savedJob
             } else if (!docResponse.exists()){
                 await setDoc(doc(db, "Users/"+$user_sub ), {});
             }
-            console.log(savedJob, "yep")
         }
     })
 
     const getJobQuestion = async (questionStore) => {    
         var req = "POSITION QUESTION,"+savedJob
-        const response = await fetch("../api", {
+        const response = await fetch("../../api", {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -38,6 +37,7 @@
         questionStore.set(data.result)
     }
     const insertInStartQuestion = async () =>{ // before it disappears
+        
         var jobName = document.getElementById("jobName")
         if (jobName.value == "") {
             alert("Please put a job name!")
@@ -56,7 +56,6 @@
     }
 
 </script>
-<Navbar/>
 <Video getQuestion={getJobQuestion} insertInStartQuestion ={insertInStartQuestion} insertInEndQuestion = {insertInEndQuestion}>
     <span class ="d-flex w-100 text-nowrap mt-3">
         <b>Job Name:</b>&nbsp;&nbsp;

@@ -4,6 +4,10 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { onMount } from "svelte";
 
+import { Buffer } from 'buffer';
+
+// @ts-ignore
+globalThis.Buffer = Buffer;
 const firebaseConfig = {
     apiKey: "AIzaSyCqMXF0c9ewaFpaddxF1p2iTn6AuZbeC4g",
     authDomain: "aeee-416c3.firebaseapp.com",
@@ -33,11 +37,13 @@ export function logoutAndReturn(){
 }
 
 
-var rawAdj = "joyous, cheery, gleeful, playful, jovial, witty, "+
-"bubbly, hilarious, piquant, jocular, snazzy, quirky, pleased, amusing, "+
-"sunny, radiant, fun, lively, happy, merry, blissful, "+
-"buoyant, zippy, brisk, quick, snappy, wacky, smart, "+
-"fresh, peppy, bright, swift, swell, chirpy, gleamy, fancy, perky"
+var rawAdj = "whimsical, playful, lighthearted, zany, cheerful, quirky, "+
+"joyful, eccentric, fun-loving, amusing, spirited, jovial, merry, wacky, "+
+"delightful, upbeat, radiant, gleeful, bubbly, sunny, hilarious, unconventional, "+
+"enchanting, dynamic, vivacious, comical, whimsy, zippy, animated, jubilant, "+
+"carefree, frolicsome, fantastic, cheery, sprightly, unpredictable, exuberant, "+
+"jolly, optimistic, high-spirited, blithe, witty, gleaming, gladsome, ecstatic, "+
+"buoyant, bizarre, magnetic, sparkling"
 var rawNoun = "quirkball, zanymoth, jinxaroo, dizzicorn, whoozit, "+
 "bumblegum, zoodlebug, mirthbot, quibblesnack, wobblefrog, jigglezip, "+
 "snazzlebee, doodleflip, wackyjazz, noodlejoy, bliparoo, quackle, zigglypuff, "+
@@ -57,6 +63,20 @@ var noun2 = rawNoun2.split(", ")
 export function generateInterviewName() {
     var randAdj = adj[Math.trunc(Math.random()*(adj.length))]
     var randNoun = noun[Math.trunc(Math.random()*(noun.length))]
-    var randNoun2 = noun2[Math.trunc(Math.random()*(noun2.length))]
+    var randNoun2 = noun2[Math.trunc(Math.random()*(noun.length))]
     return randAdj + " " + randNoun + " " + randNoun2
+}
+
+export const formatTime = (seconds) => {
+    seconds = Math.floor(seconds)
+    let minutes =  Math.floor(seconds/60)
+    seconds = seconds - minutes*60
+    if (minutes == 0) {
+        return seconds +"s"
+    }
+    return minutes+"m "+seconds+"s"
+}
+
+export const formatDate =  (date) => {
+
 }
