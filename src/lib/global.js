@@ -44,26 +44,21 @@ var rawAdj = "whimsical, playful, lighthearted, zany, cheerful, quirky, "+
 "carefree, frolicsome, fantastic, cheery, sprightly, unpredictable, exuberant, "+
 "jolly, optimistic, high-spirited, blithe, witty, gleaming, gladsome, ecstatic, "+
 "buoyant, bizarre, magnetic, sparkling"
-var rawNoun = "quirkball, zanymoth, jinxaroo, dizzicorn, whoozit, "+
-"bumblegum, zoodlebug, mirthbot, quibblesnack, wobblefrog, jigglezip, "+
+var rawNoun = "quirkball, jinxaroo, dizzicorn, whoozit, "+
+"bumblegum, zoodle, mirthbot, quibble, wobblefrog, jigglezip, "+
 "snazzlebee, doodleflip, wackyjazz, noodlejoy, bliparoo, quackle, zigglypuff, "+
 "dazzleroo, bunkaroo, quizzlepop, jollybug, zippyzap, bofflebee, snickaroo, "+
-"quibbletwirl, jigglywump, doodledrop, gleebug, quirklepop, zanyzap, bubbleroo, "+
-"dizzysnap, jogglewig, fizzbuzz, quizzler, zippydoo, boparoo, jollytwist, noodlebug, "+
-"wobblewham, jumblebee, zestaroo, dorkaroo, quirkybop, zingaroo, snazzler, jinxaroo, quackaroo, wackywoo"
-var rawNoun2 = "laughter, joyfulness, pizzazz, ticklish, frolic, bubbles, harmony, "+
-"snuggles, giggles, jamboree, whiskers, jollity, gleaming, chuckles, flair, banter, "+
-"mischief, zephyr, bonanza, twinkle, prism, mirth, jubilee, quirks, zinger, grin, snazzy, "+
-"tango, fiesta, frolic, bliss, dazzle, jazz, bounce, puddle, quirk, fizz, funk, zest, "+
-"jolt, wink, spritz, zoom, glee, blip, riff, jive, zap, jolt"
+"quibbletwirl, doodledrop, gleebee, quirklepop, zanyzap, bubbleroo, "+
+"dizzysnap, fizzbuzz, quizzler, zippydoo, boparoo, jollytwist, noodleroo, "+
+"wobblewham, jumblebee, zestaroo, dorkaroo, quirkybop, snazzler, jinxaroo, quackaroo, wackywoo"
+
 var adj = rawAdj.split(", ")
 var noun = rawNoun.split(", ")
-var noun2 = rawNoun2.split(", ")
 
 export function generateInterviewName() {
     var randAdj = adj[Math.trunc(Math.random()*(adj.length))]
     var randNoun = noun[Math.trunc(Math.random()*(noun.length))]
-    var randNoun2 = noun2[Math.trunc(Math.random()*(noun.length))]
+    var randNoun2 = noun[Math.trunc(Math.random()*(noun.length))]
     return randAdj + " " + randNoun + " " + randNoun2
 }
 
