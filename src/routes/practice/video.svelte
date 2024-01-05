@@ -44,7 +44,7 @@
             alert("Please do not include \"|\" in the interview name!")
             return;
         }
-        if (cameraReady != "Ready" || microphoneReady != "Ready"){
+        if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
             alert("Please check the permissions/connections for your microphone and camera to start.");
             return;
         }
