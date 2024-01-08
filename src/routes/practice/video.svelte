@@ -44,7 +44,10 @@
             alert("Please do not include \"|\" in the interview name!")
             return;
         }
-        
+        if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
+            alert("Please check the permissions/connections for your microphone and camera to start.");
+            return;
+        }
         interviewName = document.getElementById("interviewName").value;
         showVideo = true;
         question.set("Loading...");
@@ -216,7 +219,6 @@
 
     let cameraReady = "";
     let microphoneReady = "";
-
     DetectRTC.load(() => {
         if (DetectRTC.hasWebcam && DetectRTC.isWebsiteHasWebcamPermissions) { cameraReady = "Camera Ready"; }
         else if (!DetectRTC.hasWebcam) { cameraReady = "Camera Not Detected"; }
@@ -226,7 +228,6 @@
         else if (!DetectRTC.hasMicrophone) { microphoneReady = "Microphone Not Detected"; }
         else{ microphoneReady = "No Microphone Permissions"; }
     })
-
 </script>
 <Navbar doBeforeExiting = {() => {if (showVideo) {document.getElementById("stopBtn").click();}}}/>
 <div class = "w-100 text-dark mb-5 pb-5 p-2 flex-center flex-column">
@@ -305,7 +306,7 @@
 
         <!-- Start Video Button -->
         <form on:submit = {() => {startVideo();}}  class = "flex-center w-100 mt-2" style = "height: 50px;">
-            <input type = "submit" value = "Start Video" class = "btn btn-success py-2 fs-5" />
+            <input type = "submit" id = "startVideoButton" value = "Start Video" class = "btn btn-success py-2 fs-5"/>
         </form>
     {:else}
         <!-- Question -->

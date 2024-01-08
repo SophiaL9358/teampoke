@@ -235,24 +235,31 @@ Do you have any questions for me?`;
         console.log(DetectRTC.hasMicrophone===true);
     if (DetectRTC.hasWebcam === true && DetectRTC.isWebsiteHasWebcamPermissions === true) {
         cameraReady = "Ready";
-    }
-    else if (DetectRTC.hasWebcam === false) {
-        cameraReady = "Not Connected";
+        document.getElementById("startVideoButton").disabled = false;
     }
     else{
-        cameraReady = "No Permissions";
+        document.getElementById("startVideoButton").disabled = true;
+    if (DetectRTC.hasWebcam === false) {
+        cameraReady = "Not Connected";
+        
     }
-
+    else{
+        cameraReady = "Not Connected";
+    }
+    }
     if (DetectRTC.hasMicrophone === true && DetectRTC.isWebsiteHasMicrophonePermissions === true) {
         microphoneReady = "Ready";
+        document.getElementById("startVideoButton").disabled = false;
     }
-    else if (DetectRTC.hasMicrophone === false) {
+    else{
+        document.getElementById("startVideoButton").disabled = true; 
+    if (DetectRTC.hasMicrophone === false) {
         microphoneReady = "Not Connected";
     }
     else{
         microphoneReady = "No Permissions";
     }
-
+    }
     function test(){
         var hi = new Date();
         console.log(hi);
@@ -277,7 +284,7 @@ Do you have any questions for me?`;
                 <form on:submit = {() => {console.log("happening");startVideo();getQuestion();}}  class = "d-flex w-100 mt-2 justify-content-center align-content-center" style = "height: 50px;">
                     <!-- <i>Key Points on Resume!</i>
                         <input required placeholder = "ie. NIST Internship" class = "w-100" rows = "5" type = "text">-->
-                        <input type = "submit" value = "Start Video" class = "btn btn-success" />
+                        <input type = "submit" value = "Start Video" class = "btn btn-success" id = "startVideoButton"/>
                 </form>
             </span>
             <span id = 'mainQuestion' class ="hide">
