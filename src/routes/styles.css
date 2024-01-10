@@ -60,16 +60,20 @@ h1 {
 	background-color: #F86F03;
 }
 
+.bg-past-interviews {
+	background-color: #F9564E;
+}
+
 .bg-resume {
-	background-color: #F3C677;
+	background-color: #D6D6D6;
 }
 
 .bg-resume-questions {
-	background-color: #80ED99;
+	background-color: #FDCE4C;
 }
 
 .bg-random-questions {
-	background-color: #034078;
+	background-color: #6155B4;
 }
 
 .bg-job-questions {

@@ -20,6 +20,22 @@
             Guest!
       {:else}
             {$user_name}!
+            {#if localStorage.getItem("user_sub") == $user_sub}
+                  <br>
+                  <button class = "btn btn-primary mt-2" on:click = {() => {
+                        var tempName = prompt("Please enter your new name:");
+                        localStorage.setItem("user_name", tempName)
+                        user_name.set(tempName)
+                  }}>Change Name</button>
+                  <button class = "btn btn-danger mt-2" on:click = {() => {
+                        if(confirm("Are you sure you want to delete this account? This will delete all past interviews.")){
+                              localStorage.clear()
+                              user_sub.set("")
+                              user_name.set("")
+                              document.location.href = "/"
+                        }
+                  }}>Clear Account</button>
+            {/if}
       {/if}
       </h4>
 </div>
@@ -55,7 +71,7 @@
                         Click one of the colored buttons to select an interview. 
                   </div>
                   <div class = "col-sm-6">
-                        <a href = "/past-interviews"><button class = "poke-btn text-light w-100" style="background-color:#F9564F;"> 
+                        <a href = "/past-interviews"><button class = "poke-btn text-light w-100 bg-past-interviews"> 
                               See Past Interviews 
                         </button></a> 
                         <a href = "/resume"><button class = "poke-btn text-dark w-100 mt-3 bg-resume"> 
