@@ -334,7 +334,13 @@
         <!-- Question -->
         <div class = "d-inline-flex text-center">
             <button id = "repeatspeechbtn" class = "speak-btn" on:click={() => {repeatQuestion();}}><i class="fa-solid fa-volume-up"></i></button>
-            <span class = "fs-4 text-dark">{$question[$questionsPassed-1]}</span>
+            <span class = "fs-4 text-dark">
+                {#if $question == "Loading..."}
+                    <div class = "spinner-border spinner-border-sm text-secondary mx-2"></div>{$question}
+                {:else} 
+                    {$question[$questionsPassed-1]}
+                {/if}
+            </span>
         </div>
 
         <!-- Stop/Next Question Button & Timer & # of questions-->

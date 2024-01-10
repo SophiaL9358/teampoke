@@ -85,7 +85,7 @@
 <Video getQuestion={getResumeQuestion} insertInStartQuestion= {insertInStartQuestion} title="Resume-Specific">
     {#if !resumeExists}
         <div class = "text-danger mt-2">Your resume is not uploaded, Upload your resume at: </div>
-        <a href = "/resume"><button class = "poke-btn text-dark w-100 bg-resume"> 
+        <a href = "/resume"><button class = "poke-btn text-dark w-100 bg-resume mb-2"> 
             Upload Resume
         </button></a> 
     {:else}
