@@ -6,6 +6,9 @@ import {OPENAI_API_KEY} from "$env/static/private"
 const configuration = new Configuration({
   apiKey: OPENAI_API_KEY, // TODO: change to env variable
 });
+const modelName = "gpt-3.5-turbo-instruct"
+const temperature = 0.6;
+
 const openai = new OpenAIApi(configuration);
 
 export async function POST ({ request }) { // submit vote (i know this isnt right)
@@ -37,33 +40,32 @@ export async function POST ({ request }) { // submit vote (i know this isnt righ
     if (input == "FIRST QUESTION") {
         console.log("hwat?")
         completion = await openai.createCompletion({
-            model: "text-davinci-003",
+            model: modelName,
             prompt: generateFirstQuestion(),
-            temperature: 0.6,
+            temperature: temperature,
             max_tokens: 1024
         });
-      console.log("hwat?")
     } else if (input.startsWith("POSITION QUESTION")) {
-        var splitInput = input.split(",");
+        var splitInput = input.split("|");
         completion = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: generatePositionQuestion(splitInput[1]),
-            temperature: 0.6,
+            model: modelName,
+            prompt: generatePositionQuestion(splitInput[1], splitInput[2]),
+            temperature: temperature,
             max_tokens: 1024
         });
     }else if (input.startsWith("RESUME QUESTION")){
-      var splitInput = input.split(",");
+      var splitInput = input.split("|");
       completion = await openai.createCompletion({
-          model: "text-davinci-003",
+          model: modelName,
           prompt: generateResumeQuestion(splitInput[1]),
-          temperature: 0.6,
+          temperature: temperature,
           max_tokens: 1024
       });
     }else if (input.startsWith("FOLLOWUP QUESTION")) {
       completion = await openai.createCompletion({
-        model: "text-davinci-003",
+        model: modelName,
         prompt: generatePrompt(input),
-        temperature: 1,
+        temperature: temperature,
         max_tokens: 1024
       });
     }
@@ -94,28 +96,34 @@ function generateFirstQuestion() {
   Example: `;
 }
 
-function generatePositionQuestion(position) {
-    return `Give a clear interview question based on the job delimited by triple quotations.
-    
-    """${position}"""`;
+function generatePositionQuestion(position, numQuestions) {
+  return `You are interviewing a person.
+  Provide a string of ${numQuestions} clear, short, and professional interview questions based technical aspects of the job delimited by triple quotations.
+  
+  Use the following steps to create each question:
+  1. Randomly choose one of these words: "How", "What" "Provide", "Tell", "Name", "Why", or "Do".
+  2. Create a question starting with that word. Maximum of 15 words.
+
+  Do not repeat questions. Return the string with the questions separated only by a |.
+
+  Example of a result with 3 questions for the job "Doctor": "What motivated you to become a doctor?|How do you stay updated on medical advancements?"
+  
+  """${position}"""`;
   }
 
-  // return `Give a clear interview question based on the job delimited by triple backticks.
-    
-  //   Job: Marine Biology
-  //   Question: In your opinion, what's one of the most effective strategies for preserving endangered marine species?
-  //   Job: Civil Engineer
-  //   Question: What made you decide to become a civil engineer?
-  //   Job: ${position}
-  //   Question: `;
   function generateResumeQuestion(resumeSnip) {
-    return `Generate a simple and clear interview question based an applicant's resume.
+    return `You are interviewing a person.
+    Generate a simple and clear interview question based an applicant's resume delimited by triple quotations.
     
+    Example:
     Resume: h Netlify. Engineering a remote controlled Lego rover with an onboard Raspberry Pi, programming inpython, using a motor hat, photoresistor sensor, and temperature sensor.
-    Question: Please elaborate more on the sensors used in yur lego rover project
-    Resume:  Building and programming an underwater glider using a syringe and servo to take in/expelwater and complete a yo (diving and res
-    Question: How would you ensure the glider went all the way to the surface?
-    Job: ${resumeSnip}
+    Question: Please elaborate more on the sensors used in your lego rover project
+
+    Use the following steps to create the question:
+    1. Randomly choose one of these words: "How", "What" "Provide", "Tell", "Name", "Why", or "Do".
+    2. Create a question starting with that word. Maximum of 15 words.
+    
+    Resume: """${resumeSnip}"""
     Question: `;
   }
 

@@ -23,15 +23,6 @@
             getPdfText(buffer).then((text) =>{
                 resumeText = text;
                 resumeWords = resumeText.split(" ")
-                // while (resumeText.length > 1){
-                //     var end = 100;
-                //     if (resumeText.length < end) {
-                //         end= resumeText.length;
-                //     }
-                //     console.log(end);
-                //     resumeSections.push(resumeText.substring(0, end));
-                //     resumeText = resumeText.substring(end);
-                // }
                 console.log(resumeWords)
             })
             
@@ -52,31 +43,35 @@
     }
 
 
-    const getResumeQuestion = async (questionStore) => {      
-        var wordAmt = 30
-        var index = Math.floor(Math.random() * resumeWords.length)%(resumeWords.length-wordAmt);
-        console.log(index);  
-        var text = ""
-        for (var i = index; i < index + wordAmt; i ++) {
-            text += resumeWords[i] + " "
-        }
+    const getResumeQuestion = async (questionStore, numQuestions) => {      
+        var wordAmt = 15
+        var res = [];
 
-        var req = "RESUME QUESTION,"+text;
-        console.log(req);
-        const response = await fetch("../../api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ req }),
-        });
+        for (var j = 0; j < numQuestions; j ++ ){
+            var index = Math.floor(Math.random() * resumeWords.length)%(resumeWords.length-wordAmt);
+            var text = ""
+            for (var i = index; i < index + wordAmt; i ++) {
+                text += resumeWords[i] + " "
+            }
 
-        const data = await response.json();
-        if (response.status !== 200) {
-            throw data.error || new Error(`Request failed with status ${response.status}`);
+            var req = "RESUME QUESTION|"+text;
+            const response = await fetch("../../api", {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ req }),
+                });
+
+            const data = await response.json();
+            if (response.status !== 200) {
+                throw data.error || new Error(`Request failed with status ${response.status}`);
+            }
+            res.push(data.result)
         }
-        console.log(data.result)
-        questionStore.set(data.result)
+        
+        console.log(res)
+        questionStore.set(res)
     }
     
     const insertInStartQuestion = () => {
@@ -87,18 +82,19 @@
         return true
     }
 </script>
-<Video getQuestion={getResumeQuestion} insertInStartQuestion= {insertInStartQuestion}>
+<Video getQuestion={getResumeQuestion} insertInStartQuestion= {insertInStartQuestion} title="Resume-Specific">
     {#if !resumeExists}
-        <div class = "text-danger mt-3">Your resume is not uploaded, Upload your resume at: </div>
+        <div class = "text-danger mt-2">Your resume is not uploaded, Upload your resume at: </div>
         <a href = "/resume"><button class = "poke-btn text-dark w-100 bg-resume"> 
             Upload Resume
         </button></a> 
     {:else}
-        <span class = "mt-3">
+        <span class = "mt-1 mb-2">
             <input type = "checkbox" id = "showResume" bind:checked = {resumeCheck}/> <label for = "showResume" class = "text-dark">Show Resume Text</label>
         </span>
         {#if resumeCheck}
             {resumeText}
+            <br>
         {/if}
     {/if}
     

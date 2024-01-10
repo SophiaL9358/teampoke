@@ -1,3 +1,5 @@
+GENERATE DIFFERENT QUESTION EACH TIME
+
 <script>
     import { ref, getDownloadURL, uploadBytes, uploadString, getBlob } from "firebase/storage";
     import DetectRTC from "detectrtc/DetectRTC";
@@ -32,9 +34,6 @@
     var question = writable("---");
     const synth = window.speechSynthesis;
 
-    const minQuestions = 2;
-    const maxQuestions = 15;
-
     onMount(() => {
         // var video = document.querySelector("#streamVid");
         // video.srcObject = null // start video
@@ -57,8 +56,8 @@
         }
         interviewName = document.getElementById("interviewName").value;
         totalQuestions = document.getElementById("numQuestions").value;
-        if (totalQuestions > maxQuestions) {totalQuestions = maxQuestions;}
-        if (totalQuestions < minQuestions) {totalQuestions = minQuestions;}
+        if (totalQuestions > 20) {totalQuestions = 20;}
+        if (totalQuestions < 1) {totalQuestions = 1;}
         secondsPassed.set(0) // 830 = 13:50
         questionsPassed.set(1);
         showVideo = true;
@@ -139,6 +138,7 @@
                     downloadLink.classList.remove('hide')
                     downloadLinkProgress = "done"
 
+                    
                 })
 
                 // stop recording
@@ -183,7 +183,7 @@
                 console.log(e)
                 console.log("Something went wrong!")
             })
-        await getQuestion(question, totalQuestions);
+        await getQuestion(question);
         if (TTSChecked){
             repeatQuestion();
         }
@@ -225,7 +225,7 @@
 
     const repeatQuestion = async () => { // say question outloud
         synth.cancel();
-        let utterance = new SpeechSynthesisUtterance($question[$questionsPassed - 1]);
+        let utterance = new SpeechSynthesisUtterance($question);
         speechSynthesis.speak(utterance);
     }
 
@@ -250,10 +250,10 @@
             <!-- Number of Questions -->
             <span class ="d-flex w-100 text-nowrap mt-2">
                 <label for = "numQuestions"><b>Number of Questions:</b></label>&nbsp;&nbsp;
-                <input id = "numQuestions" type = "number" class = "w-100" min = "{minQuestions}" max = "{maxQuestions}" value = "5" placeholder="Name for Interview" />&nbsp;
+                <input id = "numQuestions" type = "number" class = "w-100" min = "1" max = "20" value = "5" placeholder="Name for Interview" />&nbsp;
             </span>
             <span class = "w-100 text-start text-secondary">
-                *Minimum of {minQuestions} question, maximum of {maxQuestions} questions
+                *Minimum of 1 question, maximum of 20 questions
             </span>
 
             <!-- Interview Name -->
@@ -334,7 +334,7 @@
         <!-- Question -->
         <div class = "d-inline-flex text-center">
             <button id = "repeatspeechbtn" class = "speak-btn" on:click={() => {repeatQuestion();}}><i class="fa-solid fa-volume-up"></i></button>
-            <span class = "fs-4 text-dark">{$question[$questionsPassed-1]}</span>
+            <span class = "fs-4 text-dark">{$question}</span>
         </div>
 
         <!-- Stop/Next Question Button & Timer & # of questions-->
@@ -342,7 +342,7 @@
             <input style = "height: 55px; width: 200px;" id = "stopBtn"  type  = "button" class = "btn btn-danger me-2 fs-5" value= "Stop Video" />
             {#if $questionsPassed < totalQuestions} 
             <input style = "height: 55px; width: 200px;" type = "button" value = "New Question" class = "btn btn-primary fs-5" 
-                on:click = {async ()=> {questionsPassed.set($questionsPassed+1); if (TTSChecked){repeatQuestion();}}} /> 
+                on:click = {async ()=> {await getQuestion(question); questionsPassed.set($questionsPassed+1); if (TTSChecked){repeatQuestion();}}} /> 
             {/if}
             <span style= "height: 55px" class = "border border-1 rounded flex-center px-3 text-end ms-3 fs-5">{formatTime($secondsPassed)}</span>
         </span>

@@ -20,8 +20,8 @@
         }
     })
 
-    const getJobQuestion = async (questionStore) => {    
-        var req = "POSITION QUESTION,"+savedJob
+    const getJobQuestion = async (questionStore, numQuestions) => {    
+        var req = "POSITION QUESTION|"+savedJob+"|"+numQuestions
         const response = await fetch("../../api", {
             method: "POST",
             headers: {
@@ -34,7 +34,9 @@
         if (response.status !== 200) {
             throw data.error || new Error(`Request failed with status ${response.status}`);
         }
-        questionStore.set(data.result)
+
+        console.log(data.result.split("|"))
+        questionStore.set(data.result.split("|"))
     }
     const insertInStartQuestion = async () =>{ // before it disappears
         
@@ -59,8 +61,8 @@
     }
 
 </script>
-<Video getQuestion={getJobQuestion} insertInStartQuestion ={insertInStartQuestion} insertInEndQuestion = {insertInEndQuestion}>
-    <span class ="d-flex w-100 text-nowrap mt-3">
+<Video getQuestion={getJobQuestion} insertInStartQuestion ={insertInStartQuestion} insertInEndQuestion = {insertInEndQuestion} title="Job-Specific">
+    <span class ="d-flex w-100 text-nowrap mt-2 mb-3">
         <b>Job Name:</b>&nbsp;&nbsp;
         <input id ="jobName" type = "text" class = "w-100" value = "" placeholder="Name for Job" />
     </span>
