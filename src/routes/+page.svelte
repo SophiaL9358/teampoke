@@ -24,7 +24,8 @@
 </a>
 <section class = "flex-center flex-column text-center" style = "height: 100vh;">
     <span class = "d-flex"><h1>Mock Interview Practice</h1><img src = "/pokeco_ex_logo.png" alt = "pokeco logo" style = "height: 60px;" class = "ms-2"/></span>
-    <span class = "mb-5">Questions? Email <a href="mailto:poke.co2023@gmail.com">poke.co2023@gmail.com</a></span>
+    <span class = "mb-3">Questions? Email <a href="mailto:poke.co2023@gmail.com">poke.co2023@gmail.com</a></span>
+    <span class = "mb-4"><a href="https://docs.google.com/forms/d/e/1FAIpQLSc4k5T6Vp9xQX4ridyuCU7BbfAEgyf8y75boavxattDIfIbZA/viewform" target="_blank">Take the Pre-Interview Survey</a></span>
     <BetterAuth/>
 
     <button class = "poke-btn bg-random-questions text-light" on:click = {continueLocally}>
