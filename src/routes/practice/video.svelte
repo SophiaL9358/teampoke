@@ -51,10 +51,10 @@
             alert("Please do not include \"|\" in the interview name!")
             return;
         }
-        if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
-            alert("Please check the permissions/connections for your microphone and camera to start.");
-            return;
-        }
+        // if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
+        //     alert("Please check the permissions/connections for your microphone and camera to start.");
+        //     return;
+        // }
         interviewName = document.getElementById("interviewName").value;
         totalQuestions = document.getElementById("numQuestions").value;
         if (totalQuestions > maxQuestions) {totalQuestions = maxQuestions;}
