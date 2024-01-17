@@ -299,7 +299,6 @@
                     *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
                 </span>
             {/if} 
-
             {#if interviewName != undefined}
                 <span><input type = "checkbox" bind:checked = {showVideoAfterwards} id = "VideoCheck"/> <label for = "VideoCheck">Show video of "{interviewName}"</label></span>
                 {#if showVideoAfterwards}
@@ -308,8 +307,7 @@
                     </video>
                 {/if}
             {/if}
-            
-
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_MjUCR9BvyFZFbxryo_GlnQtdQEDNcfoUxGfc_ahUxyTVXQ/viewform" target="_blank">Take the Post-Interview Survey</a>
             <a id = "download" class = "fs-5 hide mt-3" download>Download Video Recording "{interviewName}.webm"</a>
             {#if downloadLinkProgress == "progress"}
                 <span class = "text-primary mt-3">
@@ -324,7 +322,6 @@
             {/if}
         </div>
         <br>
-
         <!-- Start Video Button -->
         <form on:submit = {() => {startVideo();}}  class = "flex-center w-100 mt-2" style = "height: 50px;">
             <input type = "submit" id = "startVideoButton" value = "Start Video" class = "btn btn-success py-2 fs-5"/>
