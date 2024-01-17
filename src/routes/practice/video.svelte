@@ -71,10 +71,16 @@
             videoMode = { facingMode: "user "}
         }
         if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
-           
+           try {
             await navigator.mediaDevices.getUserMedia({ audio: true, video: videoMode})
+           } catch(e) {
+            console.log("Denied.");
+           }
+            
+            changeCamMicPerms();
             if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
                 alert("Please check your camera/mic permissions.")
+                showVideo = false;
                 return;
             }
         }
