@@ -103,10 +103,11 @@ function generatePositionQuestion(position, numQuestions) {
   Use the following steps to create each question:
   1. Randomly choose one of these words: "How", "What" "Provide", "Tell", "Name", "Why", or "Do".
   2. Create a question starting with that word. Maximum of 15 words.
+  3. Add | at the end of the question.
 
-  Do not repeat questions. Return the string with the questions separated only by a |.
+  Do not repeat questions or create similar questions. Only separate questions using |.
 
-  Example of a result with 3 questions for the job "Doctor": "What motivated you to become a doctor?|How do you stay updated on medical advancements?"
+  Example of a result with 3 questions for the job "Doctor": "What motivated you to become a doctor?|How do you stay updated on medical advancements?|Describe a time where you had to handle a difficult patient."
   
   """${position}"""`;
   }

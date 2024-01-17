@@ -46,6 +46,9 @@
     onMount(() => {
         document.getElementById("interviewName").value = generateInterviewName();
         loaded = true;
+        DetectRTC.load(() => {
+            changeCamMicPerms()    
+        })
     })
 
     const startVideo = async () => {
@@ -268,9 +271,6 @@
         else if (!DetectRTC.hasMicrophone) { microphoneReady = "Microphone Not Detected"; }
         else{ microphoneReady = "No Microphone Permissions"; }
     }
-    DetectRTC.load(() => {
-        changeCamMicPerms()    
-    })
 </script>
 <Navbar doBeforeExiting = {() => {if (showVideo) {document.getElementById("stopBtn").click();}}}/>
 <div class = "w-100 text-dark mb-5 pb-5 p-2 flex-center flex-column text-center w-100">

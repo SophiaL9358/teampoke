@@ -5,10 +5,13 @@
 
       console.log($user_sub);
       var guest = false
+      var isLocalStorage = false
       onMount(() => {
             if ($user_sub == "") {
                   guest = true
-
+            }
+            else if (localStorage.getItem("user_sub") != "") {
+                  isLocalStorage = true;
             }
       })
 </script>
@@ -20,7 +23,7 @@
             Guest!
       {:else}
             {$user_name}!
-            {#if localStorage.getItem("user_sub") == $user_sub}
+            {#if isLocalStorage}
                   <br>
                   <button class = "btn btn-primary mt-2" on:click = {() => {
                         var tempName = prompt("Please enter your new name:");
