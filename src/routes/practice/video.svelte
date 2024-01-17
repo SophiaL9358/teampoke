@@ -8,12 +8,15 @@
     import * as ebml from 'ts-ebml';
     import getBlobDuration from 'get-blob-duration'
 	import Navbar from "../Navbar.svelte";
+	import CamMic from "./assets/camMic.svelte";
+	import jquery from "jquery";
 
     export var getQuestion;
     export var insertInStartQuestion = () => {return true}; // before showVideo turns true, true: continue, false: leave function
     export var insertInEndQuestion = () => {}; // after showVideo turns false
     export var title = "";
 
+    // Variables
     var mediaRecorder;
     var recordedChunks;
     var interviewName;
@@ -25,7 +28,6 @@
     var totalQuestions = 1
 
     var showVideo = false;
-    var TTSChecked = true; // controls TTS checkbox
     var showVideoAfterwards = true; // controls "show video of *interview name*"
     var loaded = false;
 
@@ -35,12 +37,15 @@
     const minQuestions = 2;
     const maxQuestions = 15;
 
-    onMount(() => {
-        // var video = document.querySelector("#streamVid");
-        // video.srcObject = null // start video
+    // Interview Options/Switches
+    var TTSChecked = true; // controls TTS checkbox
+    var RecordCheck = true;
+    var VideoChecked = true;
+    var TimerCheck = true;
 
-        document.getElementById("interviewName").value = generateInterviewName()
-        loaded = true
+    onMount(() => {
+        document.getElementById("interviewName").value = generateInterviewName();
+        loaded = true;
     })
 
     const startVideo = async () => {
@@ -51,10 +56,7 @@
             alert("Please do not include \"|\" in the interview name!")
             return;
         }
-        // if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
-        //     alert("Please check the permissions/connections for your microphone and camera to start.");
-        //     return;
-        // }
+
         interviewName = document.getElementById("interviewName").value;
         totalQuestions = document.getElementById("numQuestions").value;
         if (totalQuestions > maxQuestions) {totalQuestions = maxQuestions;}
@@ -63,12 +65,31 @@
         questionsPassed.set(1);
         showVideo = true;
         question.set("Loading...");
-
         
-        navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: "user" }})
+        var videoMode = false;
+        if (VideoChecked){
+            videoMode = { facingMode: "user "}
+        }
+        if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
+           
+            await navigator.mediaDevices.getUserMedia({ audio: true, video: videoMode})
+            if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
+                alert("Please check your camera/mic permissions.")
+                return;
+            }
+        }
+        navigator.mediaDevices.getUserMedia({ audio: true, video: videoMode})
             .then( (stream) => {
+                changeCamMicPerms();
+                
                 // timer vars
                 var timerID;
+
+                if (VideoChecked){
+                    document.getElementById("videoContainer").classList.remove("hide");
+                } else {
+                    document.getElementById("videoContainer").classList.add("hide");
+                }
 
                 // video vars
                 var video = document.querySelector("#streamVid");
@@ -101,7 +122,6 @@
                     // set interview name
                     var dateVar = new Date();
                     var time = dateVar.getTime()
-                    // (dateVar.getMonth()+1)+"/"+dateVar.getDate()+"/"+dateVar.getFullYear();
                     var fullInterviewName= interviewName+"|"+time;
 
                     // change so its seekable
@@ -125,7 +145,7 @@
                     objUrl = URL.createObjectURL(refinedBlob);
                     
                     // upload to firebsae
-                    if ($user_sub != ""){ // doesn't work if user is not signed in                    
+                    if (RecordCheck && $user_sub != ""){ // doesn't work if user is not signed in                    
                         var storagePath = $user_sub + "/Videos/"+fullInterviewName+".webm"
                         var vidRef = ref(storage, storagePath);
                         await uploadBytes(vidRef, refinedBlob).then((e) => {});
@@ -148,10 +168,10 @@
                     secondsPassed.set(0)
                     
                     // stop video
-                    var video = document.querySelector("#streamVid");
-                    var stream = video.srcObject;
                     showVideo = false;
                     mediaRecorder.stop();
+                    var video = document.querySelector("#streamVid");
+                    var stream = video.srcObject;
                     video.srcObject = null;
                     if (stream != null) {
                         var tracks = stream.getTracks();
@@ -160,6 +180,7 @@
                             track.stop();
                         }
                     }
+                    
                     
                 })
 
@@ -231,7 +252,8 @@
 
     let cameraReady = "";
     let microphoneReady = "";
-    DetectRTC.load(() => {
+
+    const changeCamMicPerms = () => {
         if (DetectRTC.hasWebcam && DetectRTC.isWebsiteHasWebcamPermissions) { cameraReady = "Camera Ready"; }
         else if (!DetectRTC.hasWebcam) { cameraReady = "Camera Not Detected"; }
         else{ cameraReady = "No Camera Permissions"; }
@@ -239,87 +261,92 @@
         if (DetectRTC.hasMicrophone && DetectRTC.isWebsiteHasMicrophonePermissions) { microphoneReady = "Microphone Ready"; }
         else if (!DetectRTC.hasMicrophone) { microphoneReady = "Microphone Not Detected"; }
         else{ microphoneReady = "No Microphone Permissions"; }
+    }
+    DetectRTC.load(() => {
+        changeCamMicPerms()    
     })
 </script>
 <Navbar doBeforeExiting = {() => {if (showVideo) {document.getElementById("stopBtn").click();}}}/>
-<div class = "w-100 text-dark mb-5 pb-5 p-2 flex-center flex-column">
+<div class = "w-100 text-dark mb-5 pb-5 p-2 flex-center flex-column text-center w-100">
     {#if !showVideo}
         <h3 class = "mt-4">{title} Interview</h3>
-        <div class = "border border-2 p-3 mt-2 text-dark text-center d-flex flex-column align-items-center" style = "width: 700px;">            
-            <slot></slot>
-            <!-- Number of Questions -->
-            <span class ="d-flex w-100 text-nowrap mt-2">
-                <label for = "numQuestions"><b>Number of Questions:</b></label>&nbsp;&nbsp;
-                <input id = "numQuestions" type = "number" class = "w-100" min = "{minQuestions}" max = "{maxQuestions}" value = "5" placeholder="Name for Interview" />&nbsp;
-            </span>
-            <span class = "w-100 text-start text-secondary">
-                *Minimum of {minQuestions} question, maximum of {maxQuestions} questions
-            </span>
+        <a class = "mb-2" href="https://docs.google.com/forms/d/e/1FAIpQLSc_MjUCR9BvyFZFbxryo_GlnQtdQEDNcfoUxGfc_ahUxyTVXQ/viewform" target="_blank">Take the Post-Interview Survey</a>
 
-            <!-- Interview Name -->
-            <span class ="d-flex w-100 text-nowrap mt-3">
-                <label for = "interviewName"><b>Interview Name:</b></label>&nbsp;&nbsp;
-                <input id ="interviewName" type = "text" class = "w-100" placeholder="Name for Interview" />&nbsp;
-                <button class = "btn btn-outline-secondary" on:click  ={() => {document.getElementById("interviewName").value = generateInterviewName()}}><i class="fa-solid fa-rotate-right"></i> </button>
-            </span>
-            <!-- <span class = "w-100 text-start text-secondary">
-                *Interview name can be edited later in the "Past Interviews" section on the home page
-            </span> -->
-            <!-- Cam/Mic Settings -->
-            <table class = "mb-3 mt-4">
-                <tr class ="text-dark">
-                    {#if cameraReady == "Camera Ready"}
-                        <td class = "fs-4">
-                            <i class="fa-solid fa-camera me-1 fs-5"></i>
-                            {cameraReady}
-                        </td>
-                    {:else}
-                        <td class = "fs-5 text-danger">
-                            <i class="fa-solid fa-camera me-1 fs-5 text-danger"></i>
-                            {cameraReady}
-                        </td>
-                    {/if}
-                    <td class = "px-3"></td>
-                    {#if microphoneReady == "Microphone Ready"}
-                        <td class = "fs-4">
-                            <i class="fa-solid fa-microphone me-1 fs-5"></i>
-                            {microphoneReady}
-                        </td>
-                    {:else}
-                        <td class = "fs-5 text-danger">
-                            <i class="fa-solid fa-microphone me-1 fs-5 text-danger"></i>
-                            {microphoneReady}
-                        </td>
-                    {/if}
-                </tr>
-            </table>
-            <span><input type = "checkbox" id = "TTSCheck" bind:checked = {TTSChecked}/> <label for = "TTSCheck">Question is read out loud (Text to Speech)</label></span>
-            {#if !TTSChecked}
-                <span class = "text-secondary">
-                    *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
+        <div class = "row container d-flex justify-content-center">
+            <div class = "col-lg-7 border border-2 p-3 mt-2 text-center d-flex flex-column align-items-center">            
+                <slot></slot>
+                <!-- Number of Questions -->
+                <span class ="d-sm-unset d-flex text-nowrap w-100 mt-2"> 
+                    <label for = "numQuestions"><b>Number of Questions:</b></label>&nbsp;&nbsp;
+                    <input id = "numQuestions" type = "number" class = "w-100" min = "{minQuestions}" max = "{maxQuestions}" value = "5" placeholder="Name for Interview" />&nbsp;
                 </span>
-            {/if} 
-            {#if interviewName != undefined}
-                <span><input type = "checkbox" bind:checked = {showVideoAfterwards} id = "VideoCheck"/> <label for = "VideoCheck">Show video of "{interviewName}"</label></span>
-                {#if showVideoAfterwards}
-                    <video src = {objUrl} alt = "Video of {interviewName}" controls = true id = "videoAfter">
-                        <track kind = "captions">
-                    </video>
+                <span class = "w-100 text-start text-secondary">
+                    *Minimum of {minQuestions} question, maximum of {maxQuestions} questions
+                </span>
+    
+                <!-- Interview Name -->
+                <label for = "interviewName" class = "mt-3 text-start w-100 mb-1"><b>Interview Name:</b></label>
+                <span class ="d-flex w-100 text-nowrap">
+                    <input id ="interviewName" type = "text" class = "w-100" placeholder="Name for Interview" />&nbsp;
+                    <button class = "btn btn-outline-secondary" on:click  ={() => {document.getElementById("interviewName").value = generateInterviewName()}}><i class="fa-solid fa-rotate-right"></i> </button>
+                </span>
+                <!-- <span class = "w-100 text-start text-secondary">
+                    *Interview name can be edited later in the "Past Interviews" section on the home page
+                </span> -->
+
+                <!-- Cam/Mic Settings -->
+                <CamMic cameraReady = {cameraReady} microphoneReady = {microphoneReady} recordVideo = {VideoChecked&&RecordCheck} recordAudio = {RecordCheck}/>
+
+                {#if interviewName != undefined}
+                    <span class = "mt-3"><input type = "checkbox" bind:checked = {showVideoAfterwards} id = "VideoCheck"/> <label for = "VideoCheck">Show video of "{interviewName}"</label></span>
+                    {#if showVideoAfterwards}
+                        <video src = {objUrl} alt = "Video of {interviewName}" controls = true id = "videoAfter">
+                            <track kind = "captions">
+                        </video>
+                    {/if}
                 {/if}
-            {/if}
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_MjUCR9BvyFZFbxryo_GlnQtdQEDNcfoUxGfc_ahUxyTVXQ/viewform" target="_blank">Take the Post-Interview Survey</a>
-            <a id = "download" class = "fs-5 hide mt-3" download>Download Video Recording "{interviewName}.webm"</a>
-            {#if downloadLinkProgress == "progress"}
-                <span class = "text-primary mt-3">
-                    <div class = "spinner-border spinner-border-sm text-primary me-1"></div> Download link is in progress...
-                    <br>
-                    <i class = "text-danger">Please do not exit the page/start a new interview until the download link is finished being created.</i>
-                </span>
-            {:else if downloadLinkProgress == "error"}
-            <span>
-                <i class = "text-danger">An error occurred! Please try recording again. If this error continues, please contact the developers at poke.co2023@gmail.com.</i>
-            </span>
-            {/if}
+
+                <a id = "download" class = "fs-5 hide mt-3" download>Download Video Recording "{interviewName}.webm"</a>
+                {#if downloadLinkProgress == "progress"}
+                    <span class = "text-primary mt-3">
+                        <div class = "spinner-border spinner-border-sm text-primary me-1"></div> Download link is in progress...
+                        <br><i class = "text-danger">Please do not exit the page/start a new interview until the download link is finished being created.</i>
+                    </span>
+                {:else if downloadLinkProgress == "error"}
+                    <span><i class = "text-danger">An error occurred! Please try recording again. If this error continues, please contact the developers at poke.co2023@gmail.com.</i></span>
+                {/if}
+            </div>
+            <div class = " col-lg-4 mx-3 border border-2 p-3 mt-2 d-flex flex-column text-start">
+                <i class = "w-100 text-center">--&nbsp;Interview Options&nbsp;--</i>
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" bind:checked = {TTSChecked} type="checkbox" role="switch" id="TTSCheck">
+                    <label class="form-check-label" for="TTSCheck">Question is read out loud</label>
+                </div>
+                {#if !TTSChecked}
+                    <span class = "text-secondary">
+                        *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
+                    </span>
+                {/if} 
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" bind:checked={TimerCheck} type="checkbox" role="switch" id="TimerCheck">
+                    <label class="form-check-label" for="TimerCheck">Show the timer</label>
+                </div>
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" bind:checked={VideoChecked} type="checkbox" role="switch" id="VideoChecked">
+                    <label class="form-check-label" for="VideoChecked">Show the camera/video</label>
+                </div>                
+                <!-- <i class = "w-100 text-center mt-3">-- Recording Options --</i> -->
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" bind:checked = {RecordCheck} type="checkbox" role="switch" id="RecordVideo">
+                    <label class="form-check-label" for="RecordVideo">Save the video and audio</label>
+                </div>
+                {#if RecordCheck && !VideoChecked}
+                    <span class = "text-secondary">
+                        *Because show camera/video is off, only the audio will be saved
+                    </span>
+                {/if} 
+            </div>
+
         </div>
         <br>
         <!-- Start Video Button -->
@@ -347,12 +374,15 @@
             <input style = "height: 55px; width: 200px;" type = "button" value = "New Question" class = "btn btn-primary fs-5" 
                 on:click = {async ()=> {questionsPassed.set($questionsPassed+1); if (TTSChecked){repeatQuestion();}}} /> 
             {/if}
-            <span style= "height: 55px" class = "border border-1 rounded flex-center px-3 text-end ms-3 fs-5">{formatTime($secondsPassed)}</span>
+            {#if TimerCheck}
+                <span style= "height: 55px" class = "border border-1 rounded flex-center px-3 text-end ms-3 fs-5">{formatTime($secondsPassed)}</span>
+            {/if}
         </span>
         
     
         <!-- Video -->
-        <span class = "row mt-3">
+        
+        <span class = "row mt-3 hide" id = "videoContainer">
             <div class = "col-md">
                 <video id = "streamVid" autoplay = "true" muted>
                     <track kind = "captions">
@@ -362,12 +392,32 @@
 
         <i class = "my-2 text-secondary">Recording under the interview name of "{interviewName}"</i>
         
-        <span><input type = "checkbox" id = "TTSCheck" bind:checked = {TTSChecked}/> <label for = "TTSCheck">Question is read out loud (Text to Speech)    </label></span>
-        {#if !TTSChecked}
-            <span class = "text-secondary">
-                *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
-            </span>
-        {/if} 
+        <div class = " mx-3 border border-2 p-3 mt-2 d-flex flex-column text-start">
+            <i class = "w-100 text-center">-- Interview Options --</i>
+
+            <div class="form-check form-switch mt-2">
+                <input class="form-check-input" bind:checked = {TTSChecked} type="checkbox" role="switch" id="TTSCheck">
+                <label class="form-check-label" for="TTSCheck">Question is read out loud</label>
+            </div>
+            {#if !TTSChecked}
+                <span class = "text-secondary">
+                    *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
+                </span>
+            {/if} 
+            <div class="form-check form-switch mt-1">
+                <input class="form-check-input" bind:checked={TimerCheck} type="checkbox" role="switch" id="TimerCheck">
+                <label class="form-check-label" for="TimerCheck">Show the timer</label>
+            </div>
+            <div class="form-check form-switch mt-2">
+                <input class="form-check-input" bind:checked = {RecordCheck} type="checkbox" role="switch" id="RecordVideo">
+                <label class="form-check-label" for="RecordVideo">Save the video and audio</label>
+            </div>
+            {#if RecordCheck && !VideoChecked}
+                <span class = "text-secondary">
+                    *Because show camera/video is off, only the audio will be saved
+                </span>
+            {/if} 
+        </div>
     {/if}       
 </div>
 
@@ -384,8 +434,11 @@
         border: 1.5px black solid;
     }
     input[type="checkbox"] {
-        scale: 1.3;
-        margin-right: 0.3em;
+        scale: 1.1;
+        border-color: #2A7F80;
     }
-    
+    input:checked{
+        background-color: #2A7F80;
+    }
+
 </style>
