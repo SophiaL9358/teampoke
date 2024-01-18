@@ -10,7 +10,7 @@
             if ($user_sub == "") {
                   guest = true
             }
-            else if (localStorage.getItem("user_sub") != "") {
+            else if ($user_sub != "" && localStorage.getItem("user_sub") == $user_sub) {
                   isLocalStorage = true;
             }
       })
@@ -27,8 +27,10 @@
                   <br>
                   <button class = "btn btn-primary mt-2" on:click = {() => {
                         var tempName = prompt("Please enter your new name:");
-                        localStorage.setItem("user_name", tempName)
-                        user_name.set(tempName)
+                        if (tempName != null && tempName != "") {
+                              localStorage.setItem("user_name", tempName)
+                              user_name.set(tempName)
+                        }
                   }}>Change Name</button>
                   <button class = "btn btn-danger mt-2" on:click = {() => {
                         if(confirm("Are you sure you want to delete this account? This will delete all past interviews.")){
