@@ -343,9 +343,7 @@
         <span class = "d-flex flex-center mt-3">
             <input style = "height: 55px; width: 200px;" id = "stopBtn"  type  = "button" class = "btn btn-danger me-2 fs-5" value= "Stop Interview" on:click = {() =>{
                 if (!VideoChecked && !AudioChecked) {
-                    insertInEndQuestion();
-                    document.getElementById("interviewName").value = generateInterviewName()
-                    document.getElementById("numQuestions").value = totalQuestions;
+                    
                     showVideo = false
                 }
             }}/>
