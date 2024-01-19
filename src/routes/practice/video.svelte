@@ -10,6 +10,7 @@
 	import Navbar from "../Navbar.svelte";
 	import CamMic from "./assets/camMic.svelte";
 	import jquery from "jquery";
+	import InterviewOptions from "./assets/interviewOptions.svelte";
 
     export var getQuestion;
     export var insertInStartQuestion = () => {return true}; // before showVideo turns true, true: continue, false: leave function
@@ -42,6 +43,7 @@
     var RecordCheck = true;
     var VideoChecked = true;
     var TimerCheck = true;
+    let AudioChecked = true;
 
     onMount(() => {
         document.getElementById("interviewName").value = generateInterviewName();
@@ -81,24 +83,18 @@
            }
             
             changeCamMicPerms();
-            if (cameraReady != "Camera Ready" || microphoneReady != "Microphone Ready"){
+            if ((VideoChecked && cameraReady != "Camera Ready") || (AudioChecked && microphoneReady != "Microphone Ready")){
                 alert("Please check your camera/mic permissions.")
-                showVideo = false;
-                return;
             }
         }
-        navigator.mediaDevices.getUserMedia({ audio: true, video: videoMode})
+        if (VideoChecked || AudioChecked) {
+            navigator.mediaDevices.getUserMedia({ audio: AudioChecked, video: videoMode})
             .then( (stream) => {
                 changeCamMicPerms();
-                
                 // timer vars
                 var timerID;
-
-                if (VideoChecked){
-                    document.getElementById("videoContainer").classList.remove("hide");
-                } else {
-                    document.getElementById("videoContainer").classList.add("hide");
-                }
+                if (VideoChecked){document.getElementById("videoContainer").classList.remove("hide");
+                } else {document.getElementById("videoContainer").classList.add("hide");}
 
                 // video vars
                 var video = document.querySelector("#streamVid");
@@ -106,10 +102,7 @@
 
                 // audio
                 recordedChunks = [];
-                const options = {
-                    mimeType: 'video/webm' // \;codecs=vp9
-                };
-
+                const options = { mimeType: 'video/webm' };// \;codecs=vp9
                 mediaRecorder = new MediaRecorder(stream, options);
 
                 // record data
@@ -212,7 +205,9 @@
             }).catch((e) => {
                 console.log(e)
                 console.log("Something went wrong!")
-            })
+            })        
+        }
+        
         await getQuestion(question, totalQuestions);
         if (TTSChecked){
             repeatQuestion();
@@ -301,7 +296,7 @@
                 </span> -->
 
                 <!-- Cam/Mic Settings -->
-                <CamMic cameraReady = {cameraReady} microphoneReady = {microphoneReady} recordVideo = {VideoChecked&&RecordCheck} recordAudio = {RecordCheck}/>
+                <CamMic cameraReady = {cameraReady} microphoneReady = {microphoneReady} recordVideo = {VideoChecked} recordAudio = {AudioChecked}/>
 
                 {#if interviewName != undefined}
                     <span class = "mt-3"><input type = "checkbox" bind:checked = {showVideoAfterwards} id = "VideoCheck"/> <label for = "VideoCheck">Show video of "{interviewName}"</label></span>
@@ -322,36 +317,7 @@
                     <span><i class = "text-danger">An error occurred! Please try recording again. If this error continues, please contact the developers at poke.co2023@gmail.com.</i></span>
                 {/if}
             </div>
-            <div class = " col-lg-4 mx-3 border border-2 p-3 mt-2 d-flex flex-column text-start">
-                <i class = "w-100 text-center">--&nbsp;Interview Options&nbsp;--</i>
-                <div class="form-check form-switch mt-2">
-                    <input class="form-check-input" bind:checked = {TTSChecked} type="checkbox" role="switch" id="TTSCheck">
-                    <label class="form-check-label" for="TTSCheck">Question is read out loud</label>
-                </div>
-                {#if !TTSChecked}
-                    <span class = "text-secondary">
-                        *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
-                    </span>
-                {/if} 
-                <div class="form-check form-switch mt-2">
-                    <input class="form-check-input" bind:checked={TimerCheck} type="checkbox" role="switch" id="TimerCheck">
-                    <label class="form-check-label" for="TimerCheck">Show the timer</label>
-                </div>
-                <div class="form-check form-switch mt-2">
-                    <input class="form-check-input" bind:checked={VideoChecked} type="checkbox" role="switch" id="VideoChecked">
-                    <label class="form-check-label" for="VideoChecked">Show the camera/video</label>
-                </div>                
-                <!-- <i class = "w-100 text-center mt-3">-- Recording Options --</i> -->
-                <div class="form-check form-switch mt-2">
-                    <input class="form-check-input" bind:checked = {RecordCheck} type="checkbox" role="switch" id="RecordVideo">
-                    <label class="form-check-label" for="RecordVideo">Save the video and audio</label>
-                </div>
-                {#if RecordCheck && !VideoChecked}
-                    <span class = "text-secondary">
-                        *Because show camera/video is off, only the audio will be saved
-                    </span>
-                {/if} 
-            </div>
+            <InterviewOptions bind:TTSChecked bind:TimerCheck bind:VideoChecked bind:RecordCheck bind:AudioChecked/>
 
         </div>
         <br>
@@ -375,7 +341,11 @@
 
         <!-- Stop/Next Question Button & Timer & # of questions-->
         <span class = "d-flex flex-center mt-3">
-            <input style = "height: 55px; width: 200px;" id = "stopBtn"  type  = "button" class = "btn btn-danger me-2 fs-5" value= "Stop Video" />
+            <input style = "height: 55px; width: 200px;" id = "stopBtn"  type  = "button" class = "btn btn-danger me-2 fs-5" value= "Stop Interview" on:click = {() =>{
+                if (!VideoChecked && !AudioChecked) {
+                    showVideo = false
+                }
+            }}/>
             {#if $questionsPassed < totalQuestions} 
             <input style = "height: 55px; width: 200px;" type = "button" value = "New Question" class = "btn btn-primary fs-5" 
                 on:click = {async ()=> {questionsPassed.set($questionsPassed+1); if (TTSChecked){repeatQuestion();}}} /> 
@@ -398,32 +368,7 @@
 
         <i class = "my-2 text-secondary">Recording under the interview name of "{interviewName}"</i>
         
-        <div class = " mx-3 border border-2 p-3 mt-2 d-flex flex-column text-start">
-            <i class = "w-100 text-center">-- Interview Options --</i>
-
-            <div class="form-check form-switch mt-2">
-                <input class="form-check-input" bind:checked = {TTSChecked} type="checkbox" role="switch" id="TTSCheck">
-                <label class="form-check-label" for="TTSCheck">Question is read out loud</label>
-            </div>
-            {#if !TTSChecked}
-                <span class = "text-secondary">
-                    *Click the <i class="fa-solid fa-volume-up"></i> icon to still read the question out loud!
-                </span>
-            {/if} 
-            <div class="form-check form-switch mt-1">
-                <input class="form-check-input" bind:checked={TimerCheck} type="checkbox" role="switch" id="TimerCheck">
-                <label class="form-check-label" for="TimerCheck">Show the timer</label>
-            </div>
-            <div class="form-check form-switch mt-2">
-                <input class="form-check-input" bind:checked = {RecordCheck} type="checkbox" role="switch" id="RecordVideo">
-                <label class="form-check-label" for="RecordVideo">Save the video and audio</label>
-            </div>
-            {#if RecordCheck && !VideoChecked}
-                <span class = "text-secondary">
-                    *Because show camera/video is off, only the audio will be saved
-                </span>
-            {/if} 
-        </div>
+        <InterviewOptions duringInterview = true bind:TTSChecked bind:TimerCheck bind:VideoChecked bind:RecordCheck bind:AudioChecked/>
     {/if}       
 </div>
 
@@ -439,12 +384,4 @@
         background-color: rgb(231, 250, 235);
         border: 1.5px black solid;
     }
-    input[type="checkbox"] {
-        scale: 1.1;
-        border-color: #2A7F80;
-    }
-    input:checked{
-        background-color: #2A7F80;
-    }
-
 </style>

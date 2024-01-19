@@ -27,7 +27,8 @@
                   <br>
                   <button class = "btn btn-primary mt-2" on:click = {() => {
                         var tempName = prompt("Please enter your new name:");
-                        if (tempName != null && tempName != "") {
+                        if (tempName != null && tempNamei
+                         != "") {
                               localStorage.setItem("user_name", tempName)
                               user_name.set(tempName)
                         }
