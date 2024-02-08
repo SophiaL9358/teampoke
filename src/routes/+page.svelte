@@ -29,12 +29,12 @@
     <BetterAuth/>
 
     <button class = "poke-btn bg-random-questions text-light" on:click = {continueLocally}>
-        Contine Locally
+        Continue Locally
     </button>
 
     <a href = "/home">
         <button class = "poke-btn bg-resume-questions text-dark mt-3">
-            Contine As Guest
+            Continue As Guest
         </button>
     </a>
     <br><br><br>

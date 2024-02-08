@@ -5,7 +5,7 @@
 	import { writable } from 'svelte/store';
     import { generateInterviewName } from '$lib/global.js';
 	import { onMount } from "svelte";
-    import * as ebml from 'ts-ebml';
+    import {Decoder, Encoder, tools, Reader} from 'ts-ebml';
     import getBlobDuration from 'get-blob-duration'
 	import Navbar from "../Navbar.svelte";
 	import CamMic from "./assets/camMic.svelte";
@@ -215,7 +215,7 @@
         
     }
 
-    const readAsArrayBuffer = function(blob) {
+    const readAsArrayBuffer = async function(blob) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsArrayBuffer(blob);
@@ -225,19 +225,19 @@
     }
 
     const injectMetadata = async function(blob) {
-        const decoder = new ebml.Decoder();
-        const reader = new ebml.Reader();
+        const decoder = new Decoder()
+        const reader = new Reader()
         reader.logging = false;
         reader.drop_default_duration = false;
 
-        var buffer = await blob.arrayBuffer()
+        var buffer = await readAsArrayBuffer(blob)
         const elms = decoder.decode(buffer);
         elms.forEach((elm) => { reader.read(elm);});
         reader.stop();
         var iwannadie = await getBlobDuration(blob) * 1000000000 / reader.timecodeScale
         // console.log(await getBlobDuration(blob) * 1000000000 / reader.timecodeScale)
         
-        var refinedMetadataBuf = ebml.tools.makeMetadataSeekable(reader.metadatas, iwannadie, reader.cues);
+        var refinedMetadataBuf = tools.makeMetadataSeekable(reader.metadatas, iwannadie, reader.cues);
         var body = buffer.slice(reader.metadataSize);
 
         const result = new Blob([refinedMetadataBuf, body],
